@@ -271,3 +271,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added the Part~1 crop figure and a discussion of the official low-resolution release, REDS4 versus the validation split, tLPIPS, and the disagreement map. The compiled draft is 6 pages.
 - Why: the course report has to be 6--8 pages, and the draft was 5 pages before this text.
 - Files: `paper/main.tex`, `paper/figures/reds4_000_part1_crop.png`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Also cache the 609-byte Stable Video Diffusion VAE config next to the fp16 weights.
+- Why: STAR loads that config before sampling, and a missing tiny file would stall the run after the large CLIP download.
+- Files: `scripts/install_star_aux_cache.py`, `docs/workload/log.md`.

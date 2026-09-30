@@ -32,6 +32,14 @@ FILES = (
         "oid": "af602cd0eb4ad6086ec94fbf1438dfb1be5ec9ac03fd0215640854e90d6463a3",
         "size": 195531910,
     },
+    {
+        "stage": "vae_config.json",
+        "repo": "models--stabilityai--stable-video-diffusion-img2vid",
+        "commit": "9cf024d5bfa8f56622af86c884f26a52f6676f2e",
+        "name": "vae/config.json",
+        "oid": "c5e0302836e1f0e3cb95beea3e3d8330d16c49b9",
+        "size": 609,
+    },
 )
 
 
