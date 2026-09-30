@@ -139,6 +139,14 @@ This disagreement map is not a published uncertainty estimator.
 If STAR does not run, the hybrid is a failure case.
 
 \section{Experiments}
+\subsection{Clip geometry}
+Each REDS4 clip has 100 frames.
+The official low-resolution frames are $180\times320$, and the ground-truth frames are $720\times1280$, so the shared scale is exactly 4.
+Four clips give 400 frames.
+The Vimeo subset has 30 septuplets, 210 frames in total, each ground-truth frame $256\times448$ before the official 4$\times$ downsample.
+Full-reference scores use every frame.
+There is no border crop and no held-out frame inside a clip.
+
 \subsection{Protocol}
 PSNR and SSIM~\cite{wang2004ssim} on REDS4 use RGB and no border crop, including every frame, matching EDVR and BasicVSR.
 On the Vimeo subset they use the Y channel and no border crop.
@@ -167,7 +175,7 @@ Table~\ref{tab:status} records the state of each row. Restored videos are 100 fr
 \caption{REDS4 rows on the shared official $4\times$ bicubic input. A failure is a missing interface, not a skipped direction.}
 \label{tab:status}
 \small
-\begin{tabular}{ll}
+\begin{tabular}{@{}p{0.46\linewidth}p{0.48\linewidth}@{}}
 \hline
 Row & State \\
 \hline
@@ -179,7 +187,7 @@ TecoGAN released & Failure: TensorFlow~1 checkpoint \\
 TecoGAN PyTorch substitute & Videos written, not the release \\
 BasicVSR++ REDS4 bicubic & Videos written, scores waiting \\
 Pyramid Flow midpoint & Failure: no such sampler entry \\
-STAR light-degradation & Checkpoint on disk, CLIP still downloading \\
+STAR light degradation & Checkpoint on disk; CLIP still downloading \\
 STAR course LoRA & Failure: no LoRA parameters \\
 Disagreement-map hybrid & Waits for STAR frames \\
 \hline
@@ -198,6 +206,81 @@ YuNet and the EAST text graph are both on disk. An empty detector mask does not 
 \end{figure}
 Pyramid Flow, the released TecoGAN weights, and the STAR LoRA row are already recorded as failure cases in \texttt{docs/results/}.
 We will not fill the metric table with numbers from a different degradation or from a substitute checkpoint.
+
+Table~\ref{tab:metrics} is the REDS4 score sheet.
+Every cell stays blank until \texttt{train\_sharp} has been extracted and the restored frames have been quantized to 8 bits.
+The non-official TecoGAN row is listed so it cannot be confused with the released checkpoint, which has no score.
+
+\begin{table}[t]
+\centering
+\caption{REDS4 full-reference scores. PSNR and SSIM are RGB with no border crop. tLPIPS is not scaled by 100. FID is the small-sample distance on the 100 frames of that clip. Blank cells are not zeros.}
+\label{tab:metrics}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{}lccccc@{}}
+\hline
+Method & PSNR & SSIM & LPIPS & tLPIPS & FID \\
+\hline
+Bicubic & --- & --- & --- & --- & --- \\
+Lanczos & --- & --- & --- & --- & --- \\
+EDSR & --- & --- & --- & --- & --- \\
+Temporal average & --- & --- & --- & --- & --- \\
+Unsharp & --- & --- & --- & --- & --- \\
+EDVR-L & --- & --- & --- & --- & --- \\
+BasicVSR++ & --- & --- & --- & --- & --- \\
+TecoGAN released & \multicolumn{5}{c}{not loaded} \\
+TecoGAN PyTorch, not released & --- & --- & --- & --- & --- \\
+STAR light degradation & --- & --- & --- & --- & --- \\
+STAR LoRA & \multicolumn{5}{c}{no interface} \\
+Pyramid Flow & \multicolumn{5}{c}{no midpoint sampler} \\
+Hybrid & --- & --- & --- & --- & --- \\
+\hline
+\end{tabular}}
+\end{table}
+
+Figure~\ref{fig:reds-visual} is clip 000 at frame 50, a roadside scene with parked cars, a painted curb, and foliage.
+The bottom row is one $160\times160$ patch, chosen as the bicubic crop with the largest Laplacian variance, so the comparison is on detail rather than on a flat road.
+Bicubic upsampling leaves the car boundary soft.
+EDVR-L and BasicVSR++, both trained on REDS bicubic 4$\times$, draw that boundary more sharply.
+That observation is not a PSNR.
+The same frames will be scored against ground truth when the archive is extracted.
+STAR is not in the figure because its CLIP weights are still downloading, and the hybrid cannot be formed without those frames.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/reds4_000_part1_crop.png}
+\caption{The same $160\times160$ patch under the five Part~1 restorations. Lanczos is a sharper interpolator than bicubic. The temporal average softens the car edge. Unsharp masking puts some of that contrast back. EDSR is the official DIV2K baseline and is not trained on REDS.}
+\label{fig:part1-crop}
+\end{figure}
+Figure~\ref{fig:part1-crop} uses the same coordinates as Figure~\ref{fig:reds-visual}.
+Lanczos changes the interpolator only.
+The temporal average mixes five bicubic frames, so high-frequency edges move toward their neighbors and look softer.
+Unsharp masking is applied to that average, not to the bicubic frame, and it restores local contrast without looking at a learned prior.
+EDSR is a single-frame residual network trained on DIV2K.
+It does not see the neighboring REDS frames.
+These differences are why the later tables keep the five Part~1 rows separate from EDVR-L and BasicVSR++.
+
+\subsection{Inference settings}
+EDVR-L reads RGB scaled to $[0,1]$ and emits RGB scaled back to $[0,255]$ before quantization.
+The REDS checkpoint uses five frames.
+On a 100-frame clip, the window for frame 0 is indices 4, 3, 0, 1, 2 under \texttt{reflection\_circle} padding.
+The Vimeo checkpoint uses seven frames, the whole septuplet, and is a different weight file from the REDS model.
+BasicVSR++ runs the low-resolution clip as one recurrent sequence, with 64 mid channels and 7 residual blocks.
+The released REDS4 checkpoint already contains SpyNet.
+Official STAR uses the light-degradation I2VGen-XL weights, the fast solver, 15 function evaluations, and chunks of at most 32 frames.
+REDS has no caption, so the text condition is a generic description of a real scene.
+That model was trained on real-world degradation, not on bicubic REDS, and the score table will say so.
+The hybrid detects faces with YuNet and text with EAST on the bicubic-upscaled low-resolution frame.
+Boxes are not dilated.
+Pixels inside a box are copied from BasicVSR++.
+Pixels outside a box use the disagreement map.
+If a detector returns no boxes, the blend still runs.
+The course temporal average is applied after bicubic upsampling.
+Its weights are $[1,4,6,4,1]/16$.
+At the first frame, the two weights that would read before the clip are dropped and the remaining weights are renormalized.
+The edge is not filled by copying the first frame.
+Unsharp masking then sets $y = x + (x - G_{\sigma=1}(x))$ and clamps the result to $[0,255]$.
+Sigma 1 and amount 1 are course defaults, not a published video kernel.
 
 \subsection{Recorded failures}
 Three rows are failures because the released interface does not implement the course request.
@@ -222,6 +305,33 @@ After \texttt{train\_sharp} is extracted, \texttt{scripts/score\_ready.py} fills
 Pinned sources are BasicSR \texttt{8d56e3a}, Pyramid Flow \texttt{a012faa1}, and STAR \texttt{69b8bc53}.
 The machine has eight 24\,GB GPUs.
 One GPU is used per restoration so the runs do not share memory.
+
+\section{Discussion}
+The shared input is the official MATLAB bicubic release.
+Rebuilding the low-resolution frames with our own kernel would make every later number depend on that kernel, including the OpenCV match in Part~1.
+Our bicubic and Lanczos implementations are checked against OpenCV on float images, and they are used only to upsample.
+They are not used to synthesize a new benchmark.
+
+REDS4 is four training clips held out of the fit, not the official REDS validation split.
+The validation split is a different set of clips.
+Reporting REDS4 as ``REDS val'' would name the wrong videos.
+The Vimeo table, when the official package can be downloaded, will say ``Vimeo subset (30)'' and will list 210 frames.
+It will not be labeled as the full Vimeo-90K test set of 7824 septuplets.
+
+tLPIPS is the absolute gap between two LPIPS values: the restored pair and the ground-truth pair.
+It is not the LPIPS of a frame-difference image.
+A method can raise PSNR while increasing tLPIPS if the extra detail flickers.
+That is why the temporal average and the unsharp variant stay in the table even though they are course baselines.
+The temporal average should lower flicker and also lower sharpness.
+Unsharp masking should put contrast back and can put flicker back with it.
+The blank cells are where that tradeoff will be measured.
+
+The disagreement map is not an uncertainty estimate from EDVR, BasicVSR++, or STAR.
+It is the normalized absolute difference of two restorations on one frame.
+Certain pixels are an external prior: YuNet faces and EAST text on the bicubic-upscaled frame.
+If those detectors find nothing, every pixel uses the disagreement weight, and the hybrid is still the hybrid.
+A missing STAR restoration is the failure case.
+BasicVSR++ alone is not reported as the blend.
 
 \section{Conclusion}
 The pipeline separates official bicubic evaluation from course choices: the temporal-average kernel, the unsharp defaults, the Pyramid Flow midpoint, the STAR LoRA budget, and the disagreement map.

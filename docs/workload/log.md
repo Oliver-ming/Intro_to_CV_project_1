@@ -259,3 +259,15 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Treat `train_sharp.zip` as complete only when its length matches and the aria2 control file is gone.
 - Why: aria2 can report the full archive length before every byte is written, and an early unzip would not be the official ground truth.
 - Files: `scripts/fetch_train_sharp.py`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added the REDS4 frame geometry, a blank score table, and a qualitative note on the clip 000 figure. The first compiled draft was 4 pages.
+- Why: the course report has to be 6--8 pages, and the score cells stay blank until ground truth is extracted.
+- Files: `paper/main.tex`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added the Part~1 crop figure and a discussion of the official low-resolution release, REDS4 versus the validation split, tLPIPS, and the disagreement map. The compiled draft is 6 pages.
+- Why: the course report has to be 6--8 pages, and the draft was 5 pages before this text.
+- Files: `paper/main.tex`, `paper/figures/reds4_000_part1_crop.png`, `paper/main.pdf`, `docs/workload/log.md`.
