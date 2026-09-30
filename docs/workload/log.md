@@ -115,3 +115,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added an inspector for the official TecoGAN archive from `https://ge.in.tum.de/download/data/TecoGAN/model.zip`. It records a failure when the archive is TensorFlow 1 and contains no PyTorch state dict.
 - Why: the released model cannot be loaded in Python 3.10, and a substitute checkpoint must not be labeled as those weights.
 - Files: `scripts/inspect_tecogan_official.py`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added the disagreement-map blend and a BasicVSR++ runner. Certain pixels stay on the fidelity frame; a 64×64 random sequence upsamples to 256×256 on a GPU.
+- Why: Direction C needs the blend before STAR exists, and BasicVSR++ is the fidelity model once its checkpoint is downloaded.
+- Files: `src/part3/hybrid.py`, `src/part3/__init__.py`, `scripts/run_basicvsrpp.py`, `tests/test_part1.py`, `docs/workload/log.md`.

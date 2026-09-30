@@ -118,6 +118,39 @@ def test_edvr_reflection_circle_matches_basicsr_example():
     assert generate_frame_indices(0, 100, 5, "reflection_circle") == [4, 3, 0, 1, 2]
 
 
+def test_disagreement_map_sends_certain_pixels_to_fidelity():
+    from part3.hybrid import blend
+
+    fidelity = np.zeros((2, 2, 3), dtype=np.float32)
+    generative = np.zeros((2, 2, 3), dtype=np.float32)
+    generative[0, 0] = 100
+    generative[0, 1] = 100
+    certain = np.zeros((2, 2), dtype=bool)
+    certain[0, 0] = True
+    mixed = blend(fidelity, generative, certain)
+    np.testing.assert_allclose(mixed[0, 0], 0)
+    np.testing.assert_allclose(mixed[0, 1], 100)
+
+
+def test_basicvsrpp_upsamples_a_tiny_sequence():
+    import sys
+    import torch
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1] / "third_party" / "BasicSR"
+    sys.path.insert(0, str(root))
+    if not torch.cuda.is_available():
+        return
+    from basicsr.archs.basicvsrpp_arch import BasicVSRPlusPlus
+
+    model = BasicVSRPlusPlus(mid_channels=16, num_blocks=1, is_low_res_input=True, cpu_cache_length=10)
+    model.cuda().eval()
+    frames = torch.rand(1, 2, 3, 64, 64, device="cuda")
+    with torch.no_grad():
+        restored = model(frames)
+    assert tuple(restored.shape) == (1, 2, 3, 256, 256)
+
+
 def test_part1_writes_a_video_and_scores_bicubic():
     from part1.io import write_video
     from part1.perceptual import AlexLPIPS
