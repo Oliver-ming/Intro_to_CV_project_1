@@ -211,3 +211,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Run official STAR inference without installing xformers 0.0.21. The U-Net's bias-free attention call goes through PyTorch scaled dot-product attention.
 - Why: the released checkpoint is on disk, and the old xformers pin would replace torch 2.11.
 - Files: `scripts/run_star_official.py`, `paper/main.tex`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added a REDS4 visual comparison for clip 000, frame 50, after EDVR-L and BasicVSR++ both wrote 100 frames at 720×1280. EAST loads and returns no boxes on a blank frame.
+- Why: the report needs to show the restorations that already exist, without inventing scores before ground truth is extracted.
+- Files: `scripts/make_reds_figure.py`, `paper/figures/reds4_000_frame050.png`, `paper/main.tex`, `docs/workload/log.md`.

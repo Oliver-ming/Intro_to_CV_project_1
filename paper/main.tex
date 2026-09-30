@@ -159,12 +159,12 @@ Row & State \\
 Bicubic, Lanczos & Videos written \\
 EDSR baseline, DIV2K $4\times$ & Videos written, not trained \\
 Temporal average, unsharp & Videos written, course kernels \\
-EDVR-L REDS bicubic & Checkpoint still downloading \\
+EDVR-L REDS bicubic & Videos written, scores waiting \\
 TecoGAN released & Failure: TensorFlow~1 checkpoint \\
 TecoGAN PyTorch substitute & Separate row, not the release \\
 BasicVSR++ REDS4 bicubic & Videos written, scores waiting \\
 Pyramid Flow midpoint & Failure: no such sampler entry \\
-STAR light-degradation & Checkpoint downloading \\
+STAR light-degradation & Checkpoint on disk, inference running \\
 STAR course LoRA & Failure: no LoRA parameters \\
 Disagreement-map hybrid & Waits for STAR frames \\
 \hline
@@ -173,8 +173,14 @@ Disagreement-map hybrid & Waits for STAR frames \\
 
 BasicVSR++ uses the released REDS4 bicubic checkpoint with 64 mid channels and 7 residual blocks~\cite{chan2022basicvsrpp}.
 The four clips are restored from \texttt{train\_sharp\_bicubic/X4}.
-YuNet is on disk for the hybrid face prior.
-The EAST text graph is still downloading; a missing graph leaves that prior empty and does not by itself fail the blend.
+YuNet and the EAST text graph are both on disk. An empty detector mask does not by itself fail the blend.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/reds4_000_frame050.png}
+\caption{Clip 000, frame 50, before ground-truth scoring. Top: bicubic, EDVR-L, and BasicVSR++. Bottom: the 160$\times$160 patch with the strongest bicubic detail, taken from the same coordinates.}
+\label{fig:reds-visual}
+\end{figure}
 Pyramid Flow, the released TecoGAN weights, and the STAR LoRA row are already recorded as failure cases in \texttt{docs/results/}.
 We will not fill the metric table with numbers from a different degradation or from a substitute checkpoint.
 
