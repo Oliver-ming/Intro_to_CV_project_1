@@ -67,11 +67,10 @@ This needs the complete `weights/star_light_deg.pt` (8165233536 bytes) and `ffmp
 
 ## Report
 
-The CVPR draft is `paper/main.tex`. Numeric tables stay empty until the ground-truth frames are on disk. Compile, once LaTeX is installed, from `paper/`:
+The CVPR draft is `paper/main.tex`. Numeric tables stay empty until the ground-truth frames are on disk. `cvpr.sty` and `ieeenat_fullname.bst` are linked into `paper/` from the author kit. From `paper/`:
 
 ```bash
-TEXINPUTS=author-kit-main: pdflatex main
-bibtex main
-TEXINPUTS=author-kit-main: pdflatex main
-TEXINPUTS=author-kit-main: pdflatex main
+tectonic main.tex
 ```
+
+If `pdflatex` is installed instead, `TEXINPUTS=author-kit-main:` is enough and the links are unnecessary.

@@ -247,3 +247,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added a reproducibility section and corrected the STAR row: the released checkpoint is on disk, and inference is waiting on the CLIP weights.
 - Why: the report has to say how each row is run, and it should not claim STAR is already sampling.
 - Files: `paper/main.tex`, `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Linked `cvpr.sty` and the bibliography style into `paper/` so Tectonic can compile the draft. The first attempt stopped because the style file was only in the author-kit directory.
+- Why: this machine cannot run a current glibc Tectonic build, and the musl build does not search that subdirectory for packages.
+- Files: `paper/cvpr.sty`, `paper/ieeenat_fullname.bst`, `README.md`, `docs/workload/log.md`.
