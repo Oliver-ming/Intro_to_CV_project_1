@@ -73,3 +73,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Started the REDS download from the official Hugging Face release and added Part 1 upsamplers, the temporal average, and unsharp masking. Bicubic and Lanczos match OpenCV on float images within 1e-3.
 - Why: the benchmark low-resolution frames have to be the official release, and Part 1 can be checked before those archives finish.
 - Files: `src/part1/resample.py`, `src/part1/temporal.py`, `src/part1/__init__.py`, `tests/test_part1.py`, `requirements.txt`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added PSNR, SSIM, tLPIPS, and Fréchet distance, plus the EDSR baseline architecture that matches the official 16-block DIV2K 4× checkpoint. REDS extraction waits until each zip reaches its published size.
+- Why: metric numbers have to follow the paper split before any restored frames exist, and EDSR inference should load the released weights rather than a re-trained network.
+- Files: `src/part1/metrics.py`, `src/part1/edsr.py`, `tests/test_part1.py`, `requirements.txt`, `docs/manifests/downloads.md`, `.gitignore`, `docs/workload/log.md`.

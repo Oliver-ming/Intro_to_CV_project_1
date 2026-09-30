@@ -8,3 +8,5 @@ These archives are stored under `data/zips/` and are not committed.
 | `train_sharp_bicubic.zip` | `https://huggingface.co/datasets/snah/REDS/resolve/main/train_sharp_bicubic.zip` | 2652551733 | Official REDS 4× bicubic low-resolution frames |
 
 The MIT host `http://data.csail.mit.edu/tofu/testset/vimeo_super_resolution_test.zip` and `vimeo_test_clean.zip` return HTTP 403 from this machine. The Vimeo subset is not downloaded until a reachable official copy is found.
+
+| `edsr_baseline_x4-6b446fab.pt` | `https://cv.snu.ac.kr/research/EDSR/models/edsr_baseline_x4-6b446fab.pt` | — | Official EDSR baseline, 16 residual blocks, 64 features, DIV2K 4× |

@@ -1,5 +1,6 @@
 /data/
 /outputs/
+/weights/
 /third_party/*
 !/third_party/PINS.md
 
