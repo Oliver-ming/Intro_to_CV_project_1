@@ -83,3 +83,20 @@ def test_frechet_distance_is_zero_for_the_same_gaussian():
     mean = np.array([1.0, 2.0])
     cov = np.array([[1.0, 0.2], [0.2, 1.0]])
     np.testing.assert_allclose(frechet_distance(mean, cov, mean, cov), 0.0, atol=1e-8)
+
+
+def test_part1_writes_a_video_and_scores_bicubic():
+    from part1.io import write_video
+    from part1.perceptual import AlexLPIPS
+    from part1.restore import restore_part1
+
+    low_resolution = np.random.default_rng(3).integers(0, 256, size=(3, 8, 8, 3)).astype(np.float32)
+    restored = restore_part1(low_resolution)
+    assert restored["bicubic"].shape == (3, 32, 32, 3)
+    assert restored["temporal_unsharp"].shape == restored["bicubic"].shape
+    video = Path("/tmp/part1_bicubic.mp4")
+    write_video(video, restored["bicubic"], fps=5)
+    assert video.stat().st_size > 0
+    score = AlexLPIPS()
+    assert score(restored["bicubic"][0], restored["bicubic"][0]) < 1e-5
+    assert score.temporal(restored["bicubic"], restored["bicubic"]) == 0.0

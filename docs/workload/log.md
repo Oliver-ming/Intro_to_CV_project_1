@@ -79,3 +79,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added PSNR, SSIM, tLPIPS, and Fréchet distance, plus the EDSR baseline architecture that matches the official 16-block DIV2K 4× checkpoint. REDS extraction waits until each zip reaches its published size.
 - Why: metric numbers have to follow the paper split before any restored frames exist, and EDSR inference should load the released weights rather than a re-trained network.
 - Files: `src/part1/metrics.py`, `src/part1/edsr.py`, `tests/test_part1.py`, `requirements.txt`, `docs/manifests/downloads.md`, `.gitignore`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added the Part 1 restore entry, video writer, and AlexNet LPIPS. A three-frame synthetic clip writes an mp4, and identical frames score about zero LPIPS.
+- Why: REDS4 can be scored and packed into videos as soon as the official frames are extracted.
+- Files: `src/part1/io.py`, `src/part1/perceptual.py`, `src/part1/restore.py`, `scripts/run_part1.py`, `tests/test_part1.py`, `requirements.txt`, `docs/workload/log.md`.
