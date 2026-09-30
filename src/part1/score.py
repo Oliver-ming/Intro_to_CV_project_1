@@ -29,3 +29,19 @@ def score_reds(restored: np.ndarray, truth: np.ndarray, scorer: AlexLPIPS, incep
     if count >= 2:
         scores["fid"] = pool_distance(inception(restored), inception(truth))
     return scores
+
+
+def score_vimeo(restored: np.ndarray, truth: np.ndarray, scorer: AlexLPIPS, inception: InceptionPool) -> dict[str, float]:
+    count = min(len(restored), len(truth))
+    restored = quantize(restored[:count])
+    truth = quantize(truth[:count])
+    scores = {
+        "psnr_y": float(np.mean([psnr(restored[index], truth[index], True) for index in range(count)])),
+        "ssim_y": float(np.mean([ssim(restored[index], truth[index], True) for index in range(count)])),
+        "lpips": float(np.mean([scorer(restored[index], truth[index]) for index in range(count)])),
+        "tlpips": scorer.temporal(restored, truth),
+        "frames": count,
+    }
+    if count >= 2:
+        scores["fid"] = pool_distance(inception(restored), inception(truth))
+    return scores

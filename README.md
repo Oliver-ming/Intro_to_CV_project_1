@@ -32,6 +32,14 @@ PYTHONPATH=third_party/BasicSR ../env_cv/bin/python scripts/run_edvr.py
 
 This needs `weights/EDVR_L_x4_SR_REDS_official-9f5f5039.pth` and the extracted REDS4 low-resolution frames. It uses the pinned BasicSR EDVR-L: five frames and `reflection_circle` padding.
 
+The Vimeo subset uses a different checkpoint, the 7-frame `EDVR_L_x4_SR_Vimeo90K_official-162b54e4.pth`:
+
+```bash
+PYTHONPATH=third_party/BasicSR ../env_cv/bin/python scripts/run_edvr_vimeo.py
+```
+
+It reads `docs/manifests/vimeo-subset.txt` and scores PSNR and SSIM on Y. It does not run until `data/vimeo` contains the official low-resolution frames.
+
 ## BasicVSR++ and the disagreement-map hybrid
 
 ```bash

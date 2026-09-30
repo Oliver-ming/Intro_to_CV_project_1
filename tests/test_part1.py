@@ -198,6 +198,23 @@ def test_part1_writes_a_video_and_scores_bicubic():
     assert score.temporal(restored["bicubic"], restored["bicubic"]) == 0.0
 
 
+def test_vimeo_pair_finds_low_and_high_trees():
+    import tempfile
+    from part1.vimeo import pair_clip
+
+    with tempfile.TemporaryDirectory() as temporary:
+        root = Path(temporary)
+        low = root / "low_resolution" / "00071" / "0454"
+        high = root / "high_resolution" / "00071" / "0454"
+        low.mkdir(parents=True)
+        high.mkdir(parents=True)
+        (low / "im1.png").write_bytes(b"not-a-real-png")
+        (high / "im1.png").write_bytes(b"not-a-real-png")
+        found_low, found_high = pair_clip(root, "00071/0454")
+        assert found_low == low
+        assert found_high == high
+
+
 def test_generator_weights_strips_the_openmmlab_prefix():
     import torch
     from part3.checkpoints import generator_weights

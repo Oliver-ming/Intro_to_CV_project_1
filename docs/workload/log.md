@@ -235,3 +235,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Recorded the non-official PyTorch TecoGAN run: four REDS4 clips, 100 frames each, 720×1280, with `released_weights` false.
 - Why: the substitute finished, and the report must keep it separate from the TensorFlow release that did not load.
 - Files: `docs/results/tecogan_pytorch_not_official.json`, `paper/main.tex`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added a 7-frame EDVR-L runner for the frozen Vimeo subset. PSNR and SSIM are on Y. The runner stops when the official frames are absent.
+- Why: the Vimeo checkpoint is not the 5-frame REDS model, and the MIT archive is still HTTP 403.
+- Files: `src/part1/vimeo.py`, `src/part1/score.py`, `scripts/run_edvr_vimeo.py`, `tests/test_part1.py`, `README.md`, `docs/workload/log.md`.
