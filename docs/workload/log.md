@@ -307,3 +307,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Record that official STAR inference is running after the CLIP encoder loaded from the local cache.
 - Why: the report should not still say the CLIP weights are downloading.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Lock the REDS4 table update so Part 1 scoring and the later rescore cannot write `paper/main.tex` at the same time.
+- Why: both jobs start when ground truth appears, and an interleaved write would break the report.
+- Files: `scripts/reds_means.py`, `docs/workload/log.md`.

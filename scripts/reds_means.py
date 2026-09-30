@@ -6,6 +6,7 @@ Failure rows in the table are left as written.
 
 from __future__ import annotations
 
+import fcntl
 import json
 import re
 import shutil
@@ -89,14 +90,18 @@ def fill_table(text: str, means: dict[str, dict | None]) -> str:
 
 
 def main() -> None:
-    means = collect()
-    MEANS.parent.mkdir(parents=True, exist_ok=True)
-    MEANS.write_text(json.dumps(means, indent=2) + "\n")
-    if PAPER.is_file():
-        PAPER.write_text(fill_table(PAPER.read_text(), means))
-        _recompile()
-    filled = [label for label, scores in means.items() if scores]
-    print("filled", ", ".join(filled) if filled else "none", flush=True)
+    lock_path = ROOT / "data" / "logs" / "reds_means.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("a+") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        means = collect()
+        MEANS.parent.mkdir(parents=True, exist_ok=True)
+        MEANS.write_text(json.dumps(means, indent=2) + "\n")
+        if PAPER.is_file():
+            PAPER.write_text(fill_table(PAPER.read_text(), means))
+            _recompile()
+        filled = [label for label, scores in means.items() if scores]
+        print("filled", ", ".join(filled) if filled else "none", flush=True)
 
 
 def _recompile() -> None:
