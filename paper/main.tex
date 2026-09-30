@@ -115,6 +115,8 @@ A second row is a course LoRA experiment: rank 8, 200 steps, batch size 1, learn
 Only injected LoRA weights are trained.
 The row is judged by whether tLPIPS drops.
 If the released code has no LoRA interface, the row is a failure case.
+Pinned STAR \texttt{69b8bc53} trains ControlNet and parameters named \texttt{local}, not LoRA, so that row is the failure recorded in \texttt{docs/results/star\_lora\_attempt.json}.
+Official STAR inference is still pending the released checkpoint.
 
 The hybrid does not train a router.
 BasicVSR++ supplies the fidelity frame when a $4\times$ bicubic checkpoint matched to the benchmark is available~\cite{chan2022basicvsrpp}.

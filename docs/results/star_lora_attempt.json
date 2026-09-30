@@ -1,0 +1,7 @@
+{
+  "commit": "69b8bc53e4bb04267265fa9a288ee30882c5b2ed",
+  "source": "video_super_resolution/scripts/train_sr.py",
+  "lora_row": "failure",
+  "official_inference": "not run; released checkpoint is not on disk",
+  "reason": "train_sr.py optimizes VideoControlNet and parameters whose names contain 'local'. It does not add LoRA weights to params_to_optimize, so the course LoRA row has no interface to attach."
+}

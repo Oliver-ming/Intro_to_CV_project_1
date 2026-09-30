@@ -151,3 +151,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Opened the official TecoGAN archive (11288778 bytes). It contains only `TecoGAN.meta`, `TecoGAN.index`, and `TecoGAN.data-00000-of-00001`. Those weights were not loaded.
 - Why: the released checkpoint is TensorFlow 1, and Python 3.10 cannot install that runtime.
 - Files: `scripts/inspect_tecogan_official.py`, `docs/results/tecogan_official_attempt.json`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Inspected pinned STAR `69b8bc53`. `train_sr.py` optimizes VideoControlNet and parameters named `local`. It does not train LoRA, so the course LoRA row is a failure. Official inference is not run because the released checkpoint is not on disk.
+- Why: the course rule only runs LoRA when the released code exposes that interface.
+- Files: `scripts/record_star_lora_failure.py`, `docs/results/star_lora_attempt.json`, `third_party/PINS.md`, `paper/main.tex`, `docs/workload/log.md`.
