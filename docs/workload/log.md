@@ -349,3 +349,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Skip a REDS4 clip in official STAR when its frame folder is already complete, and write the summary after every clip.
 - Why: one frame at a time takes long enough that a later failure should not throw away finished clips.
 - Files: `scripts/run_star_official.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Cache YuNet and EAST masks on the bicubic-upscaled REDS4 frames before STAR finishes.
+- Why: the hybrid can reuse those masks, and the detectors do not need the generative frames.
+- Files: `scripts/cache_certain_masks.py`, `scripts/run_hybrid.py`, `docs/workload/log.md`.

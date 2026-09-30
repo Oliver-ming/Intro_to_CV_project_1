@@ -28,6 +28,18 @@ from part3.hybrid import blend
 CLIPS = ("000", "011", "015", "020")
 
 
+def _certain(output_root: Path, clip: str, guide: np.ndarray) -> np.ndarray:
+    path = output_root / "certain" / f"{clip}.npy"
+    if path.is_file():
+        cached = np.load(path)
+        if cached.shape == guide.shape[:3] and cached.dtype == np.bool_:
+            return cached
+    masks = np.stack([certain_mask(frame) for frame in guide])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.save(path, masks)
+    return masks
+
+
 def main() -> None:
     fidelity_root = ROOT / "outputs" / "part3" / "basicvsrpp" / "frames"
     generative_root = ROOT / "outputs" / "part3" / "star" / "frames"
@@ -49,7 +61,8 @@ def main() -> None:
         generative = read_sequence(sorted((generative_root / clip).glob("*.png")))
         low = read_sequence(sorted((ROOT / "data" / "reds" / "train" / "train_sharp_bicubic" / "X4" / clip).glob("*.png")))
         guide = np.stack([upsample(frame, 4, "bicubic") for frame in low])
-        count = min(len(fidelity), len(generative), len(guide))
+        masks = _certain(output_root, clip, guide)
+        count = min(len(fidelity), len(generative), len(guide), len(masks))
         if fidelity.shape[1:] != generative.shape[1:] or fidelity.shape[1:] != guide.shape[1:]:
             summary["clips"][clip] = {
                 "status": "shape mismatch",
@@ -59,7 +72,7 @@ def main() -> None:
             }
             print(clip, "shape mismatch", flush=True)
             continue
-        mixed = np.stack([blend(fidelity[index], generative[index], certain_mask(guide[index])) for index in range(count)])
+        mixed = np.stack([blend(fidelity[index], generative[index], masks[index]) for index in range(count)])
         write_sequence(output_root / "frames" / clip, mixed)
         write_video(output_root / f"{clip}.mp4", mixed)
         truth_dir = ROOT / "data" / "reds" / "train" / "train_sharp" / clip
