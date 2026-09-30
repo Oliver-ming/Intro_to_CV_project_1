@@ -403,3 +403,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - The REDS4 table FID is one Fréchet distance on all 400 quantized frames. Clip-level distances are not averaged into that cell.
 - Why: the metric section says the benchmark set is pooled, and a mean of four distances is a different number.
 - Files: `src/part1/score.py`, `scripts/reds_means.py`, `scripts/pool_reds_fid.py`, `paper/main.tex`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Cached certain masks for all four REDS4 clips. Clip 020 marks 293036 pixels on 34 of 100 frames.
+- Why: the hybrid can load these masks when official STAR finishes, and the prior is much denser on clip 020 than on clip 000.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
