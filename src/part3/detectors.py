@@ -52,9 +52,20 @@ def _text_boxes(image: np.ndarray) -> list[tuple[int, int, int, int]]:
     detector.setNMSThreshold(0.4)
     detector.setInputParams(1.0, (width - width % 32, height - height % 32), (123.68, 116.78, 103.94), True)
     bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    _, quadrangles = detector.detect(bgr)
+    first, second = detector.detect(bgr)
+    quadrangles = first if np.asarray(first).ndim >= 2 else second
+    return _text_boxes_from_detect(quadrangles, second if quadrangles is first else first, height, width)
+
+
+def _text_boxes_from_detect(quadrangles, confidences, height: int, width: int) -> list[tuple[int, int, int, int]]:
+    del confidences, height, width
     boxes = []
-    for quad in quadrangles:
+    array = np.asarray(quadrangles)
+    if array.ndim < 2 or array.size == 0:
+        return boxes
+    if array.ndim == 2:
+        array = array.reshape(1, *array.shape)
+    for quad in array:
         xs = quad[:, 0]
         ys = quad[:, 1]
         boxes.append((int(xs.min()), int(ys.min()), int(xs.max()), int(ys.max())))

@@ -135,6 +135,16 @@ def test_vimeo_lists_match_the_frozen_seed_draw():
     assert set(subset).isdisjoint(adaptation)
 
 
+def test_east_boxes_use_the_quadrilateral_return():
+    from part3.detectors import _text_boxes_from_detect
+
+    quad = np.array([[[1, 2], [5, 2], [5, 8], [1, 8]]], dtype=np.float32)
+    conf = (0.9,)
+    boxes = _text_boxes_from_detect(quad, conf, height=20, width=20)
+    assert boxes == [(1, 2, 5, 8)]
+    assert _text_boxes_from_detect((), (), 20, 20) == []
+
+
 def test_blank_frame_has_no_face_prior_when_yunet_is_present():
     from pathlib import Path
     from part3.detectors import YUNET, certain_mask

@@ -355,3 +355,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Cache YuNet and EAST masks on the bicubic-upscaled REDS4 frames before STAR finishes.
 - Why: the hybrid can reuse those masks, and the detectors do not need the generative frames.
 - Files: `scripts/cache_certain_masks.py`, `scripts/run_hybrid.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Read EAST quadrilaterals from the first return value. OpenCV 5 puts the confidence in the second value, and treating that as a box crashed the mask cache.
+- Why: text pixels have to be marked before the hybrid can prefer BasicVSR++ there.
+- Files: `src/part3/detectors.py`, `tests/test_part1.py`, `docs/workload/log.md`.
