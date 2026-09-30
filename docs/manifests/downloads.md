@@ -16,3 +16,4 @@ BasicSR is pinned at `8d56e3a045f9fb3e1d8872f92ee4a4f07f886b0a`. Its REDS4 EDVR-
 | `tecogan_official_model.zip` | `https://ge.in.tum.de/download/data/TecoGAN/model.zip` | 11288778 | Released TecoGAN generator. TensorFlow 1 checkpoint, not a PyTorch state dict. |
 | `face_detection_yunet_2023mar.onnx` | `https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/face_detection_yunet_2023mar.onnx` | 232589 | YuNet weights for OpenCV `FaceDetectorYN`. Course face prior, not part of a VSR paper. |
 | `TecoGAN_BI4x_Vimeo_pytorch_NOT_OFFICIAL.pth` | Google Drive id `1ie1F7wJcO4mhNWK8nPX7F0LgOoPzCwEu` | — | PyTorch reimplementation trained on Vimeo bicubic 4×. Not the released TecoGAN checkpoint. |
+| `star_light_deg.pt` | `https://huggingface.co/SherryX/STAR/resolve/main/I2VGen-XL-based/light_deg.pt` | 8165233536 | Official STAR I2VGen-XL weights for light degradation. Not bicubic training. |

@@ -175,3 +175,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Pinned TecoGAN-PyTorch at `903b070bd7dda27fb29111e39af837d589506f95`. The runner can import `FRNet` after shimming an old scikit-image name and a missing IPython hook.
 - Why: the non-official bicubic generator has to load from that tree, separate from the released TensorFlow checkpoint.
 - Files: `third_party/PINS.md`, `scripts/run_tecogan_not_official.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added an official STAR inference runner for `light_deg.pt` (8165233536 bytes). It labels the training degradation as real-world and does not train LoRA.
+- Why: the released I2VGen-XL checkpoint is the inference row; the LoRA row already has no interface.
+- Files: `scripts/run_star_official.py`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
