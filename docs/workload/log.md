@@ -253,3 +253,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Linked `cvpr.sty` and the bibliography style into `paper/` so Tectonic can compile the draft. The first attempt stopped because the style file was only in the author-kit directory.
 - Why: this machine cannot run a current glibc Tectonic build, and the musl build does not search that subdirectory for packages.
 - Files: `paper/cvpr.sty`, `paper/ieeenat_fullname.bst`, `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Treat `train_sharp.zip` as complete only when its length matches and the aria2 control file is gone.
+- Why: aria2 can report the full archive length before every byte is written, and an early unzip would not be the official ground truth.
+- Files: `scripts/fetch_train_sharp.py`, `tests/test_part1.py`, `docs/workload/log.md`.

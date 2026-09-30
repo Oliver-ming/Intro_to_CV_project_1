@@ -198,6 +198,26 @@ def test_part1_writes_a_video_and_scores_bicubic():
     assert score.temporal(restored["bicubic"], restored["bicubic"]) == 0.0
 
 
+def test_reds_archive_is_not_ready_while_aria2_control_exists():
+    import importlib.util
+    import tempfile
+
+    spec = importlib.util.spec_from_file_location(
+        "fetch_train_sharp",
+        Path(__file__).resolve().parents[1] / "scripts" / "fetch_train_sharp.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    with tempfile.TemporaryDirectory() as temporary:
+        archive = Path(temporary) / "train_sharp.zip"
+        archive.write_bytes(b"x" * 8)
+        control = Path(str(archive) + ".aria2")
+        control.write_text("partial\n")
+        assert module.archive_ready(archive, 8) is False
+        control.unlink()
+        assert module.archive_ready(archive, 8) is True
+
+
 def test_vimeo_pair_finds_low_and_high_trees():
     import tempfile
     from part1.vimeo import pair_clip

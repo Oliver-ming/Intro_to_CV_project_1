@@ -20,9 +20,14 @@ EXPECTED = 34261573976
 CLIPS = {"000", "011", "015", "020"}
 
 
+def archive_ready(path: Path, expected: int) -> bool:
+    control = Path(str(path) + ".aria2")
+    return path.is_file() and path.stat().st_size == expected and not control.exists()
+
+
 def main() -> None:
     ZIP.parent.mkdir(parents=True, exist_ok=True)
-    while not ZIP.is_file() or ZIP.stat().st_size != EXPECTED:
+    while not archive_ready(ZIP, EXPECTED):
         before = ZIP.stat().st_size if ZIP.is_file() else 0
         subprocess.call(
             [
@@ -45,8 +50,7 @@ def main() -> None:
                 URL,
             ]
         )
-        after = ZIP.stat().st_size if ZIP.is_file() else 0
-        if after == EXPECTED:
+        if archive_ready(ZIP, EXPECTED):
             break
         if after <= before:
             time.sleep(20)
