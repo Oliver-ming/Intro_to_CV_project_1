@@ -109,3 +109,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added the EDVR-L REDS4 runner on pinned BasicSR: five-frame windows, reflection_circle padding, RGB input in [0, 1]. The padding check matches BasicSR's documented example `[4, 3, 0, 1, 2]`.
 - Why: Part 2 has to call the released deformable-alignment model rather than a reimplementation.
 - Files: `scripts/run_edvr.py`, `tests/test_part1.py`, `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added an inspector for the official TecoGAN archive from `https://ge.in.tum.de/download/data/TecoGAN/model.zip`. It records a failure when the archive is TensorFlow 1 and contains no PyTorch state dict.
+- Why: the released model cannot be loaded in Python 3.10, and a substitute checkpoint must not be labeled as those weights.
+- Files: `scripts/inspect_tecogan_official.py`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
