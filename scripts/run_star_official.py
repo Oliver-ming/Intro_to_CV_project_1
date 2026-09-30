@@ -54,13 +54,14 @@ def _install_attention_shim() -> None:
 
 
 def _enhance(model, source: Path) -> int:
-    for chunk in (32, 16, 8):
+    # 32, 16, and 8 frames at 720×1280 each asked for about 31 GB.
+    for chunk in (2, 1):
         model.max_chunk_len = chunk
         try:
             model.enhance_a_video(str(source), "a realistic video frame")
             return chunk
         except RuntimeError as exc:
-            if "out of memory" not in str(exc).lower() or chunk == 8:
+            if "out of memory" not in str(exc).lower() or chunk == 1:
                 raise
             torch.cuda.empty_cache()
             print(f"out of memory at chunk {chunk}, retrying shorter", flush=True)

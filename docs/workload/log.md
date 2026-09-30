@@ -304,6 +304,12 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 
 ## 2026-10-01
 
+- Run official STAR in chunks of 2 frames, then 1, after chunks of 32, 16, and 8 each requested about 31 GB at 720×1280.
+- Why: the released sampler's longer windows do not fit in 24 GB, and the REDS4 clips still have to be restored.
+- Files: `scripts/run_star_official.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
 - Record that official STAR inference is running after the CLIP encoder loaded from the local cache.
 - Why: the report should not still say the CLIP weights are downloading.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
