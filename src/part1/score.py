@@ -67,7 +67,7 @@ def mean_clip_scores(clips: dict[str, dict]) -> dict[str, float] | None:
     for scores in scored:
         frames += int(scores["frames"])
         for key, value in scores.items():
-            if key == "frames" or isinstance(value, bool) or not isinstance(value, (int, float)):
+            if key in {"frames", "fid"} or isinstance(value, bool) or not isinstance(value, (int, float)):
                 continue
             totals[key] = totals.get(key, 0.0) + float(value)
             counts[key] = counts.get(key, 0) + 1

@@ -41,6 +41,7 @@ ROWS = (
 )
 PAPER = ROOT / "paper" / "main.tex"
 MEANS = ROOT / "docs" / "results" / "reds4_means.json"
+POOLED = ROOT / "docs" / "results" / "reds4_pooled_fid.json"
 
 
 def clip_map(payload: dict) -> dict:
@@ -63,24 +64,37 @@ def collect() -> dict[str, dict | None]:
     for name, path in SOURCES.items():
         loaded[name] = json.loads(path.read_text()) if path.is_file() else None
     means = {}
+    pooled = pooled_fid()
     part1 = loaded["part1"] or {}
     for label, source, method in ROWS:
         if method is not None:
             clips = part1_method(part1, method) if part1 else {}
         else:
             clips = clip_map(loaded[source]) if loaded[source] else {}
-        means[label] = mean_clip_scores(clips) if clips else None
+        averaged = mean_clip_scores(clips) if clips else None
+        if averaged is not None and label in pooled:
+            averaged["pooled_fid"] = pooled[label]
+        means[label] = averaged
     return means
+
+
+def pooled_fid() -> dict[str, float]:
+    if not POOLED.is_file():
+        return {}
+    payload = json.loads(POOLED.read_text())
+    return {str(label): float(value) for label, value in payload.items() if isinstance(value, (int, float))}
 
 
 def fill_table(text: str, means: dict[str, dict | None]) -> str:
     for label, _source, _method in ROWS:
         scores = means.get(label)
-        if not scores or "psnr_rgb" not in scores or "fid" not in scores:
+        if not scores or any(key not in scores for key in ("psnr_rgb", "ssim_rgb", "lpips", "tlpips")):
             continue
+        fid = scores.get("pooled_fid")
+        fid_cell = f"{fid:.2f}" if isinstance(fid, (int, float)) else "---"
         row = (
             f"{label} & {scores['psnr_rgb']:.2f} & {scores['ssim_rgb']:.4f} "
-            f"& {scores['lpips']:.4f} & {scores['tlpips']:.4f} & {scores['fid']:.2f} \\\\"
+            f"& {scores['lpips']:.4f} & {scores['tlpips']:.4f} & {fid_cell} \\\\"
         )
         pattern = re.compile(rf"^{re.escape(label)} & .*\\\\$", re.MULTILINE)
         if pattern.search(text) is None:

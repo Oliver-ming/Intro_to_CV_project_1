@@ -397,3 +397,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - The REDS4 ground truth is extracted, and the 7-frame Vimeo EDVR-L checkpoint is 82850094 bytes with 264 tensors. The report no longer says the ground-truth download is stuck at 13.67 GB.
 - Why: scores can be computed on REDS4 now, and the Vimeo weight must not be confused with the 5-frame REDS model while the MIT frames stay unavailable.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- The REDS4 table FID is one Fréchet distance on all 400 quantized frames. Clip-level distances are not averaged into that cell.
+- Why: the metric section says the benchmark set is pooled, and a mean of four distances is a different number.
+- Files: `src/part1/score.py`, `scripts/reds_means.py`, `scripts/pool_reds_fid.py`, `paper/main.tex`, `tests/test_part1.py`, `docs/workload/log.md`.

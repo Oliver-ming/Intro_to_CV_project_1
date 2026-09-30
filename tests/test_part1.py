@@ -230,6 +230,11 @@ def test_mean_clip_scores_averages_only_complete_methods():
     assert averaged is not None
     assert averaged["psnr_rgb"] == 31.0
     assert averaged["frames"] == 200
+    with_fid = {
+        "000": {"psnr_rgb": 30.0, "fid": 10.0, "frames": 100},
+        "011": {"psnr_rgb": 32.0, "fid": 30.0, "frames": 100},
+    }
+    assert "fid" not in mean_clip_scores(with_fid)
     waiting = {"000": {"psnr_rgb": 30.0, "frames": 100}, "011": {"frames": 100, "metrics": "waiting for ground truth"}}
     assert mean_clip_scores(waiting) is None
     labeled = {"checkpoint": "edvr.pth", "000": complete["000"], "011": complete["011"]}
@@ -247,12 +252,15 @@ def test_fill_table_replaces_only_a_scored_row():
     spec.loader.exec_module(module)
     text = "Bicubic & --- & --- & --- & --- & --- \\\\\nLanczos & --- & --- & --- & --- & --- \\\\\n"
     means = {
-        "Bicubic": {"psnr_rgb": 28.1, "ssim_rgb": 0.81, "lpips": 0.2, "tlpips": 0.01, "fid": 12.0, "frames": 400},
+        "Bicubic": {"psnr_rgb": 28.1, "ssim_rgb": 0.81, "lpips": 0.2, "tlpips": 0.01, "pooled_fid": 12.0, "frames": 400},
         "Lanczos": None,
     }
     filled = module.fill_table(text, means)
     assert filled.startswith("Bicubic & 28.10 & 0.8100 & 0.2000 & 0.0100 & 12.00")
     assert "Lanczos & ---" in filled
+    without_fid = {"Bicubic": {key: value for key, value in means["Bicubic"].items() if key != "pooled_fid"}, "Lanczos": None}
+    blank_fid = module.fill_table(text, without_fid)
+    assert blank_fid.startswith("Bicubic & 28.10 & 0.8100 & 0.2000 & 0.0100 & ---")
 
 
 def test_reds_archive_is_not_ready_while_aria2_control_exists():
