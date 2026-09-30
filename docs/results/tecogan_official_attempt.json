@@ -1,0 +1,12 @@
+{
+  "archive": "/home/zhangyuming/CV_project/Project_1/weights/tecogan_official_model.zip",
+  "bytes": 11288778,
+  "tensorflow_checkpoints": [
+    "TecoGAN.data-00000-of-00001",
+    "TecoGAN.index",
+    "TecoGAN.meta"
+  ],
+  "pytorch_checkpoints": [],
+  "loaded_released_weights": false,
+  "reason": "The released TecoGAN files are TensorFlow 1 checkpoints. env_cv is Python 3.10 and cannot install TensorFlow 1, so those weights were not loaded."
+}

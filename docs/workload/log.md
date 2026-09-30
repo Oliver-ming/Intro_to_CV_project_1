@@ -145,3 +145,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Inspected pinned Pyramid Flow `a012faa1`. `generate_i2v` takes one clean image; `generate` samples from noise. There is no whole-clip midpoint entry point, so Direction A is a failure case.
 - Why: the course rule only counts a restoration that starts from a noisy bicubic-upscaled clip, and the released interface does not provide that.
 - Files: `scripts/record_pyramid_flow_failure.py`, `docs/results/pyramid_flow_attempt.json`, `third_party/PINS.md`, `paper/main.tex`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Opened the official TecoGAN archive (11288778 bytes). It contains only `TecoGAN.meta`, `TecoGAN.index`, and `TecoGAN.data-00000-of-00001`. Those weights were not loaded.
+- Why: the released checkpoint is TensorFlow 1, and Python 3.10 cannot install that runtime.
+- Files: `scripts/inspect_tecogan_official.py`, `docs/results/tecogan_official_attempt.json`, `docs/workload/log.md`.

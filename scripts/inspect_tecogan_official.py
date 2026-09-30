@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 ARCHIVE = ROOT / "weights" / "tecogan_official_model.zip"
-OUTPUT = ROOT / "outputs" / "part2" / "tecogan" / "official_attempt.json"
+OUTPUT = ROOT / "docs" / "results" / "tecogan_official_attempt.json"
 
 
 def main() -> None:
