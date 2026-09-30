@@ -79,6 +79,28 @@ def test_tlpips_is_the_absolute_difference_of_consecutive_lpips():
     np.testing.assert_allclose(tlpips(restored, truth), 0.25)
 
 
+def test_pool_distance_is_zero_for_identical_features():
+    from part1.fid import pool_distance
+
+    features = np.array([[1.0, 0.0], [0.0, 1.0], [1.0, 1.0]], dtype=np.float64)
+    np.testing.assert_allclose(pool_distance(features, features), 0.0, atol=1e-6)
+
+
+def test_official_edsr_upsamples_by_four():
+    weight = Path(__file__).resolve().parents[1] / "weights" / "edsr_baseline_x4-6b446fab.pt"
+    if not weight.is_file() or weight.stat().st_size != 6081831:
+        return
+    import torch
+    from part1.edsr import load_edsr
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = load_edsr(weight, device)
+    frame = torch.rand(1, 3, 16, 16, device=device) * 255
+    with torch.no_grad():
+        restored = model(frame)
+    assert tuple(restored.shape) == (1, 3, 64, 64)
+
+
 def test_frechet_distance_is_zero_for_the_same_gaussian():
     mean = np.array([1.0, 2.0])
     cov = np.array([[1.0, 0.2], [0.2, 1.0]])

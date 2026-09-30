@@ -37,5 +37,9 @@ def write_video(path: Path, frames: np.ndarray, fps: float = 10.0) -> None:
     writer.release()
 
 
+def quantize(frames: np.ndarray) -> np.ndarray:
+    return np.clip(np.rint(frames), 0, 255).astype(np.float32)
+
+
 def _uint8(frame: np.ndarray) -> np.ndarray:
     return np.clip(np.rint(frame), 0, 255).astype(np.uint8)

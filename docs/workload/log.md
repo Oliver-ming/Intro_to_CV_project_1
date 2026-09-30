@@ -85,3 +85,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added the Part 1 restore entry, video writer, and AlexNet LPIPS. A three-frame synthetic clip writes an mp4, and identical frames score about zero LPIPS.
 - Why: REDS4 can be scored and packed into videos as soon as the official frames are extracted.
 - Files: `src/part1/io.py`, `src/part1/perceptual.py`, `src/part1/restore.py`, `scripts/run_part1.py`, `tests/test_part1.py`, `requirements.txt`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Loaded the official EDSR baseline checkpoint and confirmed a 16×16 input becomes 64×64. Added small-sample FID on Inception features, and a README for the Part 1 command. Scores use 8-bit quantized frames.
+- Why: the released weights have to run before REDS4 is scored, and FID has to record the frame count instead of being compared with a paper's full-set number.
+- Files: `src/part1/fid.py`, `scripts/run_part1.py`, `tests/test_part1.py`, `README.md`, `docs/workload/log.md`.

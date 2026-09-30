@@ -18,9 +18,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from part1.edsr import load_edsr
-from part1.io import read_sequence, write_video
+from part1.io import quantize, read_sequence, write_video
 from part1.metrics import psnr, ssim
 from part1.perceptual import AlexLPIPS
+from part1.fid import InceptionPool, pool_distance
 from part1.restore import restore_part1
 
 CLIPS = ("000", "011", "015", "020")
@@ -35,6 +36,7 @@ def main() -> None:
     checkpoint = ROOT / "weights" / "edsr_baseline_x4-6b446fab.pt"
     edsr = load_edsr(checkpoint, device) if checkpoint.is_file() and checkpoint.stat().st_size == 6081831 else None
     scorer = AlexLPIPS(device)
+    inception = InceptionPool(device)
     summary = {}
     output_root = ROOT / "outputs" / "part1"
     for clip, (low_paths, truth_paths) in pairs.items():
@@ -44,7 +46,7 @@ def main() -> None:
         clip_scores = {}
         for name, frames in restored.items():
             write_video(output_root / clip / f"{name}.mp4", frames)
-            clip_scores[name] = _score(frames, truth, scorer)
+            clip_scores[name] = _score(frames, truth, scorer, inception)
         summary[clip] = clip_scores
     output_root.mkdir(parents=True, exist_ok=True)
     (output_root / "metrics.json").write_text(json.dumps(summary, indent=2))
@@ -67,17 +69,22 @@ def _frames(folder: Path) -> list[Path]:
     return frames
 
 
-def _score(restored: np.ndarray, truth: np.ndarray, scorer: AlexLPIPS) -> dict[str, float]:
+def _score(restored: np.ndarray, truth: np.ndarray, scorer: AlexLPIPS, inception: InceptionPool) -> dict[str, float]:
     count = min(len(restored), len(truth))
+    restored = quantize(restored[:count])
+    truth = quantize(truth[:count])
     rgb = [psnr(restored[index], truth[index], y_channel=False) for index in range(count)]
     structure = [ssim(restored[index], truth[index], y_channel=False) for index in range(count)]
-    return {
+    scores = {
         "psnr_rgb": float(np.mean(rgb)),
         "ssim_rgb": float(np.mean(structure)),
         "lpips": float(np.mean([scorer(restored[index], truth[index]) for index in range(count)])),
-        "tlpips": scorer.temporal(restored[:count], truth[:count]),
+        "tlpips": scorer.temporal(restored, truth),
         "frames": count,
     }
+    if count >= 2:
+        scores["fid"] = pool_distance(inception(restored), inception(truth))
+    return scores
 
 
 if __name__ == "__main__":
