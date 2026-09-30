@@ -385,3 +385,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added official STAR to the clip 000 frame 50 comparison. The crop stays the bicubic patch at y=280, x=560.
 - Why: the generative restoration has to be visible next to the fidelity methods before scores exist.
 - Files: `scripts/make_reds_figure.py`, `paper/figures/reds4_000_frame050.png`, `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Recorded the clip 015 certain-pixel count: 16384 pixels on 2 of 100 frames.
+- Why: the face and text prior stays sparse, and the report should say so before the hybrid is blended.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.

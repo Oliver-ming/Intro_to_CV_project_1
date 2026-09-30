@@ -279,6 +279,7 @@ Pixels outside a box use the disagreement map.
 If a detector returns no boxes, the blend still runs.
 On clip 000 the two detectors together mark 8640 pixels, and only 3 of the 100 frames contain any box.
 On clip 011 they mark 124291 pixels across 11 frames.
+On clip 015 they mark 16384 pixels across 2 frames.
 The course temporal average is applied after bicubic upsampling.
 Its weights are $[1,4,6,4,1]/16$.
 At the first frame, the two weights that would read before the clip are dropped and the remaining weights are renormalized.
