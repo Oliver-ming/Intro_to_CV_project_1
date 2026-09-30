@@ -97,3 +97,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Cloned BasicSR at `8d56e3a045f9fb3e1d8872f92ee4a4f07f886b0a` for EDVR-L. The REDS4 test config uses five frames and RGB PSNR with no border crop. The official weights are the Google Drive files named in the download manifest.
 - Why: Part 2 has to run the released bicubic EDVR-L checkpoint, not the blur-downsampling one.
 - Files: `third_party/PINS.md`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Extracted the 400 official low-resolution REDS4 frames from `train_sharp_bicubic.zip`. Part 1 can write restored videos before the ground-truth archive finishes.
+- Why: the bicubic archive matched its published size, and metrics still wait for `train_sharp`.
+- Files: `scripts/run_part1.py`, `docs/workload/log.md`.

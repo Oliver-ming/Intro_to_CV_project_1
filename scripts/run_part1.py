@@ -35,19 +35,26 @@ def main() -> None:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     checkpoint = ROOT / "weights" / "edsr_baseline_x4-6b446fab.pt"
     edsr = load_edsr(checkpoint, device) if checkpoint.is_file() and checkpoint.stat().st_size == 6081831 else None
-    scorer = AlexLPIPS(device)
-    inception = InceptionPool(device)
+    scorer = None
+    inception = None
     summary = {}
     output_root = ROOT / "outputs" / "part1"
     for clip, (low_paths, truth_paths) in pairs.items():
         low = read_sequence(low_paths)
-        truth = read_sequence(truth_paths)
+        truth = read_sequence(truth_paths) if truth_paths else None
         restored = restore_part1(low, edsr, device)
         clip_scores = {}
         for name, frames in restored.items():
             write_video(output_root / clip / f"{name}.mp4", frames)
-            clip_scores[name] = _score(frames, truth, scorer, inception)
+            if truth is not None:
+                if scorer is None:
+                    scorer = AlexLPIPS(device)
+                    inception = InceptionPool(device)
+                clip_scores[name] = _score(frames, truth, scorer, inception)
+            else:
+                clip_scores[name] = {"frames": int(len(frames)), "metrics": "waiting for ground truth"}
         summary[clip] = clip_scores
+        print(clip, "videos written", flush=True)
     output_root.mkdir(parents=True, exist_ok=True)
     (output_root / "metrics.json").write_text(json.dumps(summary, indent=2))
     print(json.dumps(summary, indent=2))
@@ -57,9 +64,10 @@ def _pair(root: Path, clip: str) -> tuple[list[Path], list[Path]]:
     folders = [path for path in root.rglob(clip) if path.is_dir()]
     low = [path for path in folders if "bicubic" in path.as_posix()]
     truth = [path for path in folders if "bicubic" not in path.as_posix()]
-    if len(low) != 1 or len(truth) != 1:
-        raise SystemExit(f"expected one low-resolution and one ground-truth folder for {clip}, found {folders}")
-    return _frames(low[0]), _frames(truth[0])
+    if len(low) != 1:
+        raise SystemExit(f"expected one low-resolution folder for {clip}, found {folders}")
+    truth_frames = _frames(truth[0]) if len(truth) == 1 else None
+    return _frames(low[0]), truth_frames
 
 
 def _frames(folder: Path) -> list[Path]:
