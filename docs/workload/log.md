@@ -217,3 +217,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added a REDS4 visual comparison for clip 000, frame 50, after EDVR-L and BasicVSR++ both wrote 100 frames at 720×1280. EAST loads and returns no boxes on a blank frame.
 - Why: the report needs to show the restorations that already exist, without inventing scores before ground truth is extracted.
 - Files: `scripts/make_reds_figure.py`, `paper/figures/reds4_000_frame050.png`, `paper/main.tex`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Prefetch the OpenCLIP ViT-H-14 bin and the Stable Video Diffusion fp16 VAE, then install them into the Hugging Face cache before STAR inference.
+- Why: the official loader stalled with a zero-byte CLIP download, so the released checkpoint never started sampling.
+- Files: `scripts/install_star_aux_cache.py`, `docs/workload/log.md`.
