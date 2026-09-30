@@ -301,3 +301,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - If official STAR runs out of GPU memory at chunk length 32, retry that clip at 16 and then 8.
 - Why: a 24 GB GPU may not hold 32 frames at 720×1280, and a failed clip should not end the REDS4 run.
 - Files: `scripts/run_star_official.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Record that official STAR inference is running after the CLIP encoder loaded from the local cache.
+- Why: the report should not still say the CLIP weights are downloading.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
