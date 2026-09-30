@@ -163,3 +163,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Queued the non-official PyTorch TecoGAN BI 4× weights until the EDVR Drive download exits. The filename says `NOT_OFFICIAL`.
 - Why: the released checkpoint is TensorFlow 1 and cannot be loaded, and a substitute must stay visibly separate from it.
 - Files: `scripts/fetch_tecogan_pytorch_not_official.py`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added a REDS4 runner for the skycrapers PyTorch TecoGAN. It records `released_weights: false` and writes videos under `outputs/part2/tecogan_not_official`.
+- Why: the released TensorFlow checkpoint cannot be loaded, and the substitute must stay labeled as a different model.
+- Files: `scripts/run_tecogan_not_official.py`, `docs/workload/log.md`.
