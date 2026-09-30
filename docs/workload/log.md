@@ -91,3 +91,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Loaded the official EDSR baseline checkpoint and confirmed a 16×16 input becomes 64×64. Added small-sample FID on Inception features, and a README for the Part 1 command. Scores use 8-bit quantized frames.
 - Why: the released weights have to run before REDS4 is scored, and FID has to record the frame count instead of being compared with a paper's full-set number.
 - Files: `src/part1/fid.py`, `scripts/run_part1.py`, `tests/test_part1.py`, `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Cloned BasicSR at `8d56e3a045f9fb3e1d8872f92ee4a4f07f886b0a` for EDVR-L. The REDS4 test config uses five frames and RGB PSNR with no border crop. The official weights are the Google Drive files named in the download manifest.
+- Why: Part 2 has to run the released bicubic EDVR-L checkpoint, not the blur-downsampling one.
+- Files: `third_party/PINS.md`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
