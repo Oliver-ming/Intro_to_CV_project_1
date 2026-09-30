@@ -18,11 +18,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from part1.edsr import load_edsr
-from part1.io import quantize, read_sequence, write_video
-from part1.metrics import psnr, ssim
+from part1.fid import InceptionPool
+from part1.io import read_sequence, write_video
 from part1.perceptual import AlexLPIPS
-from part1.fid import InceptionPool, pool_distance
 from part1.restore import restore_part1
+from part1.score import score_reds
 
 CLIPS = ("000", "011", "015", "020")
 
@@ -78,21 +78,7 @@ def _frames(folder: Path) -> list[Path]:
 
 
 def _score(restored: np.ndarray, truth: np.ndarray, scorer: AlexLPIPS, inception: InceptionPool) -> dict[str, float]:
-    count = min(len(restored), len(truth))
-    restored = quantize(restored[:count])
-    truth = quantize(truth[:count])
-    rgb = [psnr(restored[index], truth[index], y_channel=False) for index in range(count)]
-    structure = [ssim(restored[index], truth[index], y_channel=False) for index in range(count)]
-    scores = {
-        "psnr_rgb": float(np.mean(rgb)),
-        "ssim_rgb": float(np.mean(structure)),
-        "lpips": float(np.mean([scorer(restored[index], truth[index]) for index in range(count)])),
-        "tlpips": scorer.temporal(restored, truth),
-        "frames": count,
-    }
-    if count >= 2:
-        scores["fid"] = pool_distance(inception(restored), inception(truth))
-    return scores
+    return score_reds(restored, truth, scorer, inception)
 
 
 if __name__ == "__main__":

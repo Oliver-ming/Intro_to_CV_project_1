@@ -31,7 +31,7 @@ WEIGHT = ROOT / "weights" / "TecoGAN_BI4x_Vimeo_pytorch_NOT_OFFICIAL.pth"
 sys.path.insert(0, str(CODES))
 sys.path.insert(0, str(ROOT / "src"))
 
-from part1.io import read_sequence, write_video
+from part1.io import read_sequence, write_sequence, write_video
 
 CLIPS = ("000", "011", "015", "020")
 
@@ -66,6 +66,7 @@ def main() -> None:
         restored = np.asarray(restored, dtype=np.float32)
         if restored.max() <= 1.5:
             restored = restored * 255.0
+        write_sequence(output_root / "frames" / clip, restored)
         write_video(output_root / f"{clip}.mp4", restored)
         summary["clips"][clip] = {"frames": int(len(restored))}
         print(clip, "done", flush=True)

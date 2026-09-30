@@ -196,3 +196,27 @@ def test_part1_writes_a_video_and_scores_bicubic():
     score = AlexLPIPS()
     assert score(restored["bicubic"][0], restored["bicubic"][0]) < 1e-5
     assert score.temporal(restored["bicubic"], restored["bicubic"]) == 0.0
+
+
+def test_generator_weights_strips_the_openmmlab_prefix():
+    import torch
+    from part3.checkpoints import generator_weights
+
+    weight = torch.zeros(1)
+    state = generator_weights(
+        {
+            "state_dict": {
+                "generator.conv.weight": weight,
+                "generator.spynet.basic_module.0.basic_module.1.conv.weight": weight,
+                "generator.upsample2.upsample_conv.bias": weight,
+                "step": 1,
+            },
+            "meta": {},
+        }
+    )
+    assert set(state) == {
+        "conv.weight",
+        "spynet.basic_module.0.basic_module.2.weight",
+        "upconv2.bias",
+    }
+    assert state["conv.weight"] is weight

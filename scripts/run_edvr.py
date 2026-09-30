@@ -22,8 +22,10 @@ sys.path.insert(0, str(ROOT / "src"))
 from basicsr.archs.edvr_arch import EDVR
 from basicsr.data.data_util import generate_frame_indices
 
-from part1.io import quantize, read_sequence, write_video
-from part1.metrics import psnr, ssim
+from part1.fid import InceptionPool
+from part1.io import read_sequence, write_sequence, write_video
+from part1.perceptual import AlexLPIPS
+from part1.score import score_reds
 
 CLIPS = ("000", "011", "015", "020")
 WEIGHT = ROOT / "weights" / "EDVR_L_x4_SR_REDS_official-9f5f5039.pth"
@@ -36,23 +38,23 @@ def main() -> None:
     model = _load(device)
     output_root = ROOT / "outputs" / "part2" / "edvr"
     summary = {}
+    scorer = None
+    inception = None
     for clip in CLIPS:
         low_dir = ROOT / "data" / "reds" / "train" / "train_sharp_bicubic" / "X4" / clip
         if not low_dir.is_dir():
             raise SystemExit(f"missing low-resolution clip {low_dir}")
         frames = read_sequence(sorted(low_dir.glob("*.png")))
         restored = _restore(model, frames, device)
+        write_sequence(output_root / "frames" / clip, restored)
         write_video(output_root / f"{clip}.mp4", restored)
         truth_dir = ROOT / "data" / "reds" / "train" / "train_sharp" / clip
         if truth_dir.is_dir() and any(truth_dir.glob("*.png")):
-            truth = quantize(read_sequence(sorted(truth_dir.glob("*.png"))))
-            restored_q = quantize(restored)
-            count = min(len(restored_q), len(truth))
-            summary[clip] = {
-                "psnr_rgb": float(np.mean([psnr(restored_q[i], truth[i], False) for i in range(count)])),
-                "ssim_rgb": float(np.mean([ssim(restored_q[i], truth[i], False) for i in range(count)])),
-                "frames": count,
-            }
+            if scorer is None or inception is None:
+                scorer = AlexLPIPS(device)
+                inception = InceptionPool(device)
+            truth = read_sequence(sorted(truth_dir.glob("*.png")))
+            summary[clip] = score_reds(restored, truth, scorer, inception)
         else:
             summary[clip] = {"frames": int(len(restored)), "metrics": "waiting for ground truth"}
         print(clip, "done", flush=True)

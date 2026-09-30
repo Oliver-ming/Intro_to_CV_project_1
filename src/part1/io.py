@@ -19,6 +19,12 @@ def read_sequence(paths: list[Path]) -> np.ndarray:
     return np.stack([read_frame(path) for path in paths])
 
 
+def write_sequence(directory: Path, frames: np.ndarray) -> None:
+    directory.mkdir(parents=True, exist_ok=True)
+    for index, frame in enumerate(frames):
+        write_frame(directory / f"{index:08d}.png", frame)
+
+
 def write_frame(path: Path, frame: np.ndarray) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     bgr = cv2.cvtColor(_uint8(frame), cv2.COLOR_RGB2BGR)

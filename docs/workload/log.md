@@ -187,3 +187,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Load the STAR generator once for all four REDS4 clips, and refuse to start while the aria2 control file is still present.
 - Why: the 8 GB checkpoint should not be read from a sparse download or reloaded per clip.
 - Files: `scripts/run_star_official.py`, `requirements-star.txt`, `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Save restored frames for EDVR, BasicVSR++, STAR, TecoGAN, and the disagreement-map hybrid, and score them with the REDS4 protocol once ground truth exists. The OpenMMLab BasicVSR++ checkpoint loads after SpyNet and upsampling names are rewritten to the pinned BasicSR modules.
+- Why: the hybrid has to blend the actual fidelity and generative frames, and late ground truth still has to fill PSNR, SSIM, LPIPS, tLPIPS, and FID.
+- Files: `src/part1/io.py`, `src/part1/score.py`, `src/part3/checkpoints.py`, `scripts/run_edvr.py`, `scripts/run_basicvsrpp.py`, `scripts/run_star_official.py`, `scripts/run_tecogan_not_official.py`, `scripts/run_hybrid.py`, `scripts/score_ready.py`, `scripts/run_part1.py`, `tests/test_part1.py`, `README.md`, `docs/manifests/downloads.md`, `docs/workload/log.md`.

@@ -18,7 +18,7 @@ EXPECTED = 8165233536
 sys.path.insert(0, str(STAR_ROOT))
 sys.path.insert(0, str(ROOT / "src"))
 
-from part1.io import read_sequence, write_video
+from part1.io import read_sequence, write_frame, write_video
 
 CLIPS = ("000", "011", "015", "020")
 
@@ -27,7 +27,18 @@ def main() -> None:
     control = Path(str(WEIGHT) + ".aria2")
     if control.exists() or not WEIGHT.is_file() or WEIGHT.stat().st_size != EXPECTED:
         raise SystemExit(f"STAR light_deg.pt is not complete: {WEIGHT}")
-    from video_super_resolution.scripts.inference_sr import STAR
+    import video_super_resolution.scripts.inference_sr as inference_sr
+
+    def _save_video(video, save_dir, file_name, fps=16.0):
+        frame_dir = Path(save_dir) / "frames" / Path(file_name).stem
+        frame_dir.mkdir(parents=True, exist_ok=True)
+        for index, image in enumerate(video):
+            write_frame(frame_dir / f"{index:08d}.png", image.detach().cpu().numpy())
+        return inference_sr_save(video, save_dir, file_name, fps)
+
+    inference_sr_save = inference_sr.save_video
+    inference_sr.save_video = _save_video
+    STAR = inference_sr.STAR
 
     output_root = ROOT / "outputs" / "part3" / "star"
     output_root.mkdir(parents=True, exist_ok=True)
