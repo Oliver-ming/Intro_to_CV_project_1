@@ -241,3 +241,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added a 7-frame EDVR-L runner for the frozen Vimeo subset. PSNR and SSIM are on Y. The runner stops when the official frames are absent.
 - Why: the Vimeo checkpoint is not the 5-frame REDS model, and the MIT archive is still HTTP 403.
 - Files: `src/part1/vimeo.py`, `src/part1/score.py`, `scripts/run_edvr_vimeo.py`, `tests/test_part1.py`, `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added a reproducibility section and corrected the STAR row: the released checkpoint is on disk, and inference is waiting on the CLIP weights.
+- Why: the report has to say how each row is run, and it should not claim STAR is already sampling.
+- Files: `paper/main.tex`, `README.md`, `docs/workload/log.md`.

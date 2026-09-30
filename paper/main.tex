@@ -179,7 +179,7 @@ TecoGAN released & Failure: TensorFlow~1 checkpoint \\
 TecoGAN PyTorch substitute & Videos written, not the release \\
 BasicVSR++ REDS4 bicubic & Videos written, scores waiting \\
 Pyramid Flow midpoint & Failure: no such sampler entry \\
-STAR light-degradation & Checkpoint on disk, inference running \\
+STAR light-degradation & Checkpoint on disk, CLIP still downloading \\
 STAR course LoRA & Failure: no LoRA parameters \\
 Disagreement-map hybrid & Waits for STAR frames \\
 \hline
@@ -193,7 +193,7 @@ YuNet and the EAST text graph are both on disk. An empty detector mask does not 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/reds4_000_frame050.png}
-\caption{Clip 000, frame 50, before ground-truth scoring. Top: bicubic, EDVR-L, and BasicVSR++. Bottom: the 160$\times$160 patch with the strongest bicubic detail, taken from the same coordinates.}
+\caption{Clip 000, frame 50, before ground-truth scoring. Top: bicubic, EDVR-L, and BasicVSR++. Bottom: the 160$\times$160 patch with the strongest bicubic detail. In that patch the car edges are softer after bicubic upsampling than after EDVR-L or BasicVSR++.}
 \label{fig:reds-visual}
 \end{figure}
 Pyramid Flow, the released TecoGAN weights, and the STAR LoRA row are already recorded as failure cases in \texttt{docs/results/}.
@@ -209,6 +209,19 @@ STAR at \texttt{69b8bc53} optimizes \texttt{VideoControlNet} and parameters whos
 The optimizer list has no LoRA weights, so rank 8, 200 steps, batch size 1, and learning rate $10^{-4}$ were not run.
 A separate PyTorch generator trained on Vimeo bicubic data has now restored the four REDS4 clips.
 It is not the released TecoGAN checkpoint.
+
+\subsection{Reproducibility}
+The code, the frozen Vimeo list, and this draft live in one git repository.
+Part~1 is \texttt{scripts/run\_part1.py}.
+EDVR-L on REDS4 is \texttt{scripts/run\_edvr.py} with the 5-frame bicubic checkpoint.
+The Vimeo row is \texttt{scripts/run\_edvr\_vimeo.py} with the 7-frame checkpoint, and it refuses to run without the official frames.
+BasicVSR++ is \texttt{scripts/run\_basicvsrpp.py}.
+The non-official TecoGAN generator is \texttt{scripts/run\_tecogan\_not\_official.py}.
+Official STAR is \texttt{scripts/run\_star\_official.py}, and the hybrid is \texttt{scripts/run\_hybrid.py}.
+After \texttt{train\_sharp} is extracted, \texttt{scripts/score\_ready.py} fills RGB PSNR, SSIM, AlexNet LPIPS, tLPIPS, and small-sample FID for every method that has saved frames.
+Pinned sources are BasicSR \texttt{8d56e3a}, Pyramid Flow \texttt{a012faa1}, and STAR \texttt{69b8bc53}.
+The machine has eight 24\,GB GPUs.
+One GPU is used per restoration so the runs do not share memory.
 
 \section{Conclusion}
 The pipeline separates official bicubic evaluation from course choices: the temporal-average kernel, the unsharp defaults, the Pyramid Flow midpoint, the STAR LoRA budget, and the disagreement map.

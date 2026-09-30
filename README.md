@@ -49,6 +49,14 @@ CUDA_VISIBLE_DEVICES=5 ../env_cv/bin/python scripts/run_hybrid.py
 
 BasicVSR++ is the fidelity model. It uses the REDS4 bicubic checkpoint, 64 mid channels and 7 blocks. The hybrid reads its frames and the official STAR frames. Face and text boxes on the bicubic-upscaled low-resolution frame come from BasicVSR++. Other pixels use the per-frame disagreement map. After `train_sharp` is extracted, `scripts/score_ready.py` scores every method that has saved frames: RGB PSNR and SSIM with no border crop, AlexNet LPIPS, tLPIPS without the ×100 scale, and small-sample FID with the frame count.
 
+## TecoGAN
+
+The released archive is TensorFlow 1. `scripts/inspect_tecogan_official.py` records that it does not load here. A separate PyTorch checkpoint, trained on Vimeo bicubic 4× and labeled not official, is run with:
+
+```bash
+CUDA_VISIBLE_DEVICES=2 ../env_cv/bin/python scripts/run_tecogan_not_official.py
+```
+
 ## STAR
 
 ```bash
