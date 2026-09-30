@@ -1,0 +1,19 @@
+{
+  "released_weights": false,
+  "checkpoint": "TecoGAN_BI4x_Vimeo_pytorch_NOT_OFFICIAL.pth",
+  "training_degradation": "Vimeo-90K bicubic 4x, skycrapers reimplementation",
+  "clips": {
+    "000": {
+      "frames": 100
+    },
+    "011": {
+      "frames": 100
+    },
+    "015": {
+      "frames": 100
+    },
+    "020": {
+      "frames": 100
+    }
+  }
+}

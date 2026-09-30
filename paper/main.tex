@@ -176,7 +176,7 @@ EDSR baseline, DIV2K $4\times$ & Videos written, not trained \\
 Temporal average, unsharp & Videos written, course kernels \\
 EDVR-L REDS bicubic & Videos written, scores waiting \\
 TecoGAN released & Failure: TensorFlow~1 checkpoint \\
-TecoGAN PyTorch substitute & Separate row, not the release \\
+TecoGAN PyTorch substitute & Videos written, not the release \\
 BasicVSR++ REDS4 bicubic & Videos written, scores waiting \\
 Pyramid Flow midpoint & Failure: no such sampler entry \\
 STAR light-degradation & Checkpoint on disk, inference running \\
@@ -207,7 +207,8 @@ Pyramid Flow at \texttt{a012faa1} has \texttt{generate}, which samples from nois
 It has no call that noises a whole bicubic-upscaled clip and integrates from the sampler midpoint, so that row stays out of the metric table.
 STAR at \texttt{69b8bc53} optimizes \texttt{VideoControlNet} and parameters whose names contain \texttt{local}.
 The optimizer list has no LoRA weights, so rank 8, 200 steps, batch size 1, and learning rate $10^{-4}$ were not run.
-A PyTorch TecoGAN trained on Vimeo bicubic data may still be reported later, and it will be labeled as a substitute.
+A separate PyTorch generator trained on Vimeo bicubic data has now restored the four REDS4 clips.
+It is not the released TecoGAN checkpoint.
 
 \section{Conclusion}
 The pipeline separates official bicubic evaluation from course choices: the temporal-average kernel, the unsharp defaults, the Pyramid Flow midpoint, the STAR LoRA budget, and the disagreement map.

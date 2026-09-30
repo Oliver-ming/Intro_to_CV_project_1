@@ -229,3 +229,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Wrote the REDS4 luma and tLPIPS definitions, the disagreement-map blend, the EDVR edge window, and the three recorded failure cases into the report.
 - Why: the draft has to state the scoring rules and the failed interfaces before the ground-truth numbers exist.
 - Files: `paper/main.tex`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Recorded the non-official PyTorch TecoGAN run: four REDS4 clips, 100 frames each, 720×1280, with `released_weights` false.
+- Why: the substitute finished, and the report must keep it separate from the TensorFlow release that did not load.
+- Files: `docs/results/tecogan_pytorch_not_official.json`, `paper/main.tex`, `docs/workload/log.md`.
