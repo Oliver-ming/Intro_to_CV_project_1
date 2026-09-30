@@ -157,3 +157,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Inspected pinned STAR `69b8bc53`. `train_sr.py` optimizes VideoControlNet and parameters named `local`. It does not train LoRA, so the course LoRA row is a failure. Official inference is not run because the released checkpoint is not on disk.
 - Why: the course rule only runs LoRA when the released code exposes that interface.
 - Files: `scripts/record_star_lora_failure.py`, `docs/results/star_lora_attempt.json`, `third_party/PINS.md`, `paper/main.tex`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Queued the non-official PyTorch TecoGAN BI 4× weights until the EDVR Drive download exits. The filename says `NOT_OFFICIAL`.
+- Why: the released checkpoint is TensorFlow 1 and cannot be loaded, and a substitute must stay visibly separate from it.
+- Files: `scripts/fetch_tecogan_pytorch_not_official.py`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
