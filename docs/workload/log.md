@@ -361,3 +361,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Read EAST quadrilaterals from the first return value. OpenCV 5 puts the confidence in the second value, and treating that as a box crashed the mask cache.
 - Why: text pixels have to be marked before the hybrid can prefer BasicVSR++ there.
 - Files: `src/part3/detectors.py`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Recorded the clip 000 certain-pixel count: 8640 pixels on 3 of 100 frames, array shape 100×720×1280.
+- Why: the hybrid prior is sparse on this driving clip, and an empty mask is still a valid blend.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
