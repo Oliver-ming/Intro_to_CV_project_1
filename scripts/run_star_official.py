@@ -24,7 +24,8 @@ CLIPS = ("000", "011", "015", "020")
 
 
 def main() -> None:
-    if not WEIGHT.is_file() or WEIGHT.stat().st_size != EXPECTED:
+    control = Path(str(WEIGHT) + ".aria2")
+    if control.exists() or not WEIGHT.is_file() or WEIGHT.stat().st_size != EXPECTED:
         raise SystemExit(f"STAR light_deg.pt is not complete: {WEIGHT}")
     from video_super_resolution.scripts.inference_sr import STAR
 
@@ -36,20 +37,23 @@ def main() -> None:
         "lora": "not run; no LoRA interface in train_sr.py",
         "clips": {},
     }
+    model = None
     for clip in CLIPS:
         low_dir = ROOT / "data" / "reds" / "train" / "train_sharp_bicubic" / "X4" / clip
         frames = read_sequence(sorted(low_dir.glob("*.png")))
         source = output_root / f"{clip}_lr.mp4"
         write_video(source, frames, fps=8)
-        model = STAR(
-            result_dir=str(output_root),
-            file_name=f"{clip}.mp4",
-            model_path=str(WEIGHT),
-            solver_mode="fast",
-            steps=15,
-            upscale=4,
-            max_chunk_len=32,
-        )
+        if model is None:
+            model = STAR(
+                result_dir=str(output_root),
+                file_name=f"{clip}.mp4",
+                model_path=str(WEIGHT),
+                solver_mode="fast",
+                steps=15,
+                upscale=4,
+                max_chunk_len=32,
+            )
+        model.file_name = f"{clip}.mp4"
         model.enhance_a_video(str(source), "a realistic video frame")
         summary["clips"][clip] = {"frames": int(len(frames))}
         print(clip, "done", flush=True)

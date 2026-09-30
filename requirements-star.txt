@@ -1,0 +1,11 @@
+# Extra packages for official STAR inference.
+# Do not install third_party/STAR/requirements.txt: it pins torch==2.0.1.
+# This environment keeps the already installed torch 2.11.
+easydict==1.13
+einops==0.8.0
+av
+open-clip-torch==2.20.0
+diffusers==0.30.0
+huggingface_hub==0.23.3
+fairscale==0.4.13
+torchsde==0.2.6

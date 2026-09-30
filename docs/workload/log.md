@@ -181,3 +181,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added an official STAR inference runner for `light_deg.pt` (8165233536 bytes). It labels the training degradation as real-world and does not train LoRA.
 - Why: the released I2VGen-XL checkpoint is the inference row; the LoRA row already has no interface.
 - Files: `scripts/run_star_official.py`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Load the STAR generator once for all four REDS4 clips, and refuse to start while the aria2 control file is still present.
+- Why: the 8 GB checkpoint should not be read from a sparse download or reloaded per clip.
+- Files: `scripts/run_star_official.py`, `requirements-star.txt`, `README.md`, `docs/workload/log.md`.
