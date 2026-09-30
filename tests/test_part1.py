@@ -211,6 +211,27 @@ def test_mean_clip_scores_averages_only_complete_methods():
     assert averaged["frames"] == 200
     waiting = {"000": {"psnr_rgb": 30.0, "frames": 100}, "011": {"frames": 100, "metrics": "waiting for ground truth"}}
     assert mean_clip_scores(waiting) is None
+    labeled = {"checkpoint": "edvr.pth", "000": complete["000"], "011": complete["011"]}
+    assert mean_clip_scores(labeled)["psnr_rgb"] == 31.0
+
+
+def test_fill_table_replaces_only_a_scored_row():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "reds_means",
+        Path(__file__).resolve().parents[1] / "scripts" / "reds_means.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    text = "Bicubic & --- & --- & --- & --- & --- \\\\\nLanczos & --- & --- & --- & --- & --- \\\\\n"
+    means = {
+        "Bicubic": {"psnr_rgb": 28.1, "ssim_rgb": 0.81, "lpips": 0.2, "tlpips": 0.01, "fid": 12.0, "frames": 400},
+        "Lanczos": None,
+    }
+    filled = module.fill_table(text, means)
+    assert filled.startswith("Bicubic & 28.10 & 0.8100 & 0.2000 & 0.0100 & 12.00")
+    assert "Lanczos & ---" in filled
 
 
 def test_reds_archive_is_not_ready_while_aria2_control_exists():

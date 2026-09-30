@@ -67,6 +67,9 @@ def main() -> None:
     report = ROOT / "docs" / "results" / "reds4_metrics.json"
     report.parent.mkdir(parents=True, exist_ok=True)
     report.write_text(json.dumps(collected, indent=2) + "\n")
+    from reds_means import main as write_means
+
+    write_means()
 
 
 if __name__ == "__main__":

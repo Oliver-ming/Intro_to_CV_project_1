@@ -58,6 +58,10 @@ def main() -> None:
     output_root.mkdir(parents=True, exist_ok=True)
     (output_root / "metrics.json").write_text(json.dumps(summary, indent=2))
     print(json.dumps(summary, indent=2))
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from reds_means import main as write_means
+
+    write_means()
 
 
 def _pair(root: Path, clip: str) -> tuple[list[Path], list[Path]]:

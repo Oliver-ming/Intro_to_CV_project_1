@@ -53,12 +53,13 @@ def mean_clip_scores(clips: dict[str, dict]) -> dict[str, float] | None:
     Returns None unless every clip has a numeric PSNR. Frame counts are summed.
     """
 
+    clip_rows = {key: value for key, value in clips.items() if isinstance(value, dict)}
     scored = [
         value
-        for value in clips.values()
-        if isinstance(value, dict) and ("psnr_rgb" in value or "psnr_y" in value)
+        for value in clip_rows.values()
+        if "psnr_rgb" in value or "psnr_y" in value
     ]
-    if len(scored) != len(clips) or not scored:
+    if len(scored) != len(clip_rows) or not scored:
         return None
     totals: dict[str, float] = {}
     counts: dict[str, int] = {}
