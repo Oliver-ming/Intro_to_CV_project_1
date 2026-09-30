@@ -121,3 +121,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added the disagreement-map blend and a BasicVSR++ runner. Certain pixels stay on the fidelity frame; a 64×64 random sequence upsamples to 256×256 on a GPU.
 - Why: Direction C needs the blend before STAR exists, and BasicVSR++ is the fidelity model once its checkpoint is downloaded.
 - Files: `src/part3/hybrid.py`, `src/part3/__init__.py`, `scripts/run_basicvsrpp.py`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Froze the Vimeo subset (30 test clips) and the adaptation list (20 training clips) with numpy Generator seed 0, from BasicSR's official 7824-clip test list and training list.
+- Why: the subset has to be fixed before the Vimeo frames themselves are reachable, and the tables must not be described as the full Vimeo-90K-T.
+- Files: `scripts/freeze_vimeo_lists.py`, `docs/manifests/vimeo-subset.txt`, `docs/manifests/vimeo-adaptation.txt`, `tests/test_part1.py`, `docs/workload/log.md`.

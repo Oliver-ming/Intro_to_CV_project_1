@@ -118,6 +118,23 @@ def test_edvr_reflection_circle_matches_basicsr_example():
     assert generate_frame_indices(0, 100, 5, "reflection_circle") == [4, 3, 0, 1, 2]
 
 
+def test_vimeo_lists_match_the_frozen_seed_draw():
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(root / "scripts"))
+    from freeze_vimeo_lists import TEST_LIST, TRAIN_LIST, draw, _keys
+
+    subset = (root / "docs" / "manifests" / "vimeo-subset.txt").read_text().splitlines()
+    adaptation = (root / "docs" / "manifests" / "vimeo-adaptation.txt").read_text().splitlines()
+    assert subset == draw(_keys(TEST_LIST), 30)
+    assert adaptation == draw(_keys(TRAIN_LIST), 20)
+    assert len(set(subset)) == 30
+    assert len(set(adaptation)) == 20
+    assert set(subset).isdisjoint(adaptation)
+
+
 def test_disagreement_map_sends_certain_pixels_to_fidelity():
     from part3.hybrid import blend
 
