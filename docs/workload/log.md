@@ -67,3 +67,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Recorded the planning baseline in git. The author on each commit is supplied at commit time and is not written into git config.
 - Why: the machine has no `user.name` or `user.email`, and the repository still needs a traceable history.
 - Files: `CONTEXT.md`, `docs/adr/`, `docs/workload/log.md`, `third_party/PINS.md`, `.gitignore`, `Project 1- video super-resolution.pdf`.
+
+## 2026-10-01
+
+- Started the REDS download from the official Hugging Face release and added Part 1 upsamplers, the temporal average, and unsharp masking. Bicubic and Lanczos match OpenCV on float images within 1e-3.
+- Why: the benchmark low-resolution frames have to be the official release, and Part 1 can be checked before those archives finish.
+- Files: `src/part1/resample.py`, `src/part1/temporal.py`, `src/part1/__init__.py`, `tests/test_part1.py`, `requirements.txt`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
