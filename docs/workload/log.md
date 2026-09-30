@@ -319,3 +319,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Lock the REDS4 table update so Part 1 scoring and the later rescore cannot write `paper/main.tex` at the same time.
 - Why: both jobs start when ground truth appears, and an interleaved write would break the report.
 - Files: `scripts/reds_means.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Record that STAR windows of two or more frames do not fit in 24 GB, so the REDS4 run uses one frame. A watcher marks inference done only after the current process exits successfully.
+- Why: the hybrid has to start from that sentinel, and the report should not still say the chunk length is 32.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.

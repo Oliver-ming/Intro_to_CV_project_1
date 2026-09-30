@@ -267,7 +267,8 @@ On a 100-frame clip, the window for frame 0 is indices 4, 3, 0, 1, 2 under \text
 The Vimeo checkpoint uses seven frames, the whole septuplet, and is a different weight file from the REDS model.
 BasicVSR++ runs the low-resolution clip as one recurrent sequence, with 64 mid channels and 7 residual blocks.
 The released REDS4 checkpoint already contains SpyNet.
-Official STAR uses the light-degradation I2VGen-XL weights, the fast solver, 15 function evaluations, and chunks of at most 32 frames.
+Official STAR uses the light-degradation I2VGen-XL weights, the fast solver, and 15 function evaluations.
+Chunks of 2 or more frames at 720$\times$1280 request about 31\,GB and do not fit in 24\,GB, so this run uses one frame at a time.
 REDS has no caption, so the text condition is a generic description of a real scene.
 That model was trained on real-world degradation, not on bicubic REDS, and the score table will say so.
 The hybrid detects faces with YuNet and text with EAST on the bicubic-upscaled low-resolution frame.
