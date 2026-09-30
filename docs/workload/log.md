@@ -325,3 +325,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Record that STAR windows of two or more frames do not fit in 24 GB, so the REDS4 run uses one frame. A watcher marks inference done only after the current process exits successfully.
 - Why: the hybrid has to start from that sentinel, and the report should not still say the chunk length is 32.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Documented that official STAR uses one frame at a time on this 24 GB GPU.
+- Why: the README still described the run as if the released 32-frame window fit.
+- Files: `README.md`, `docs/workload/log.md`.
