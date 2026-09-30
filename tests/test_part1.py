@@ -107,6 +107,17 @@ def test_frechet_distance_is_zero_for_the_same_gaussian():
     np.testing.assert_allclose(frechet_distance(mean, cov, mean, cov), 0.0, atol=1e-8)
 
 
+def test_edvr_reflection_circle_matches_basicsr_example():
+    import sys
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1] / "third_party" / "BasicSR"
+    sys.path.insert(0, str(root))
+    from basicsr.data.data_util import generate_frame_indices
+
+    assert generate_frame_indices(0, 100, 5, "reflection_circle") == [4, 3, 0, 1, 2]
+
+
 def test_part1_writes_a_video_and_scores_bicubic():
     from part1.io import write_video
     from part1.perceptual import AlexLPIPS

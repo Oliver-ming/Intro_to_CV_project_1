@@ -103,3 +103,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Extracted the 400 official low-resolution REDS4 frames from `train_sharp_bicubic.zip`. Part 1 can write restored videos before the ground-truth archive finishes.
 - Why: the bicubic archive matched its published size, and metrics still wait for `train_sharp`.
 - Files: `scripts/run_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added the EDVR-L REDS4 runner on pinned BasicSR: five-frame windows, reflection_circle padding, RGB input in [0, 1]. The padding check matches BasicSR's documented example `[4, 3, 0, 1, 2]`.
+- Why: Part 2 has to call the released deformable-alignment model rather than a reimplementation.
+- Files: `scripts/run_edvr.py`, `tests/test_part1.py`, `README.md`, `docs/workload/log.md`.

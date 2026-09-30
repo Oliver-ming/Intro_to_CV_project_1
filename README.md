@@ -22,4 +22,12 @@ The MIT Vimeo test packages return HTTP 403 from this machine, so the 30-clip su
 ../env_cv/bin/python scripts/run_part1.py
 ```
 
-Restored videos and `metrics.json` are written to `outputs/part1/`. REDS4 PSNR and SSIM are on RGB with no border crop. Frames are quantized to 8-bit before scoring. tLPIPS is not multiplied by 100. FID is the small-sample Fréchet distance on that clip, and the json records the frame count.
+Restored videos and `metrics.json` are written to `outputs/part1/`. REDS4 PSNR and SSIM are on RGB with no border crop. Frames are quantized to 8-bit before scoring. tLPIPS is not multiplied by 100. FID is the small-sample Fréchet distance on that clip, and the json records the frame count. If `train_sharp` is not extracted yet, the script still writes the videos and leaves metrics for later.
+
+## EDVR
+
+```bash
+PYTHONPATH=third_party/BasicSR ../env_cv/bin/python scripts/run_edvr.py
+```
+
+This needs `weights/EDVR_L_x4_SR_REDS_official-9f5f5039.pth` and the extracted REDS4 low-resolution frames. It uses the pinned BasicSR EDVR-L: five frames and `reflection_circle` padding.
