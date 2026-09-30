@@ -337,3 +337,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Score REDS4 again after STAR and the hybrid finish, and refresh the report table from the hybrid's own metrics.
 - Why: ground truth may be extracted before those frames exist, and the first scoring pass would leave their rows blank.
 - Files: `scripts/run_star_official.py`, `scripts/run_hybrid.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Write restored frames from a contiguous array so OpenCV accepts cropped tensors.
+- Why: a non-contiguous crop already failed in the Part 1 figure, and STAR will save the same kind of array.
+- Files: `src/part1/io.py`, `tests/test_part1.py`, `docs/workload/log.md`.

@@ -48,4 +48,5 @@ def quantize(frames: np.ndarray) -> np.ndarray:
 
 
 def _uint8(frame: np.ndarray) -> np.ndarray:
-    return np.clip(np.rint(frame), 0, 255).astype(np.uint8)
+    values = np.clip(np.rint(frame), 0, 255).astype(np.uint8)
+    return np.ascontiguousarray(values)

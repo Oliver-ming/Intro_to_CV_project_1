@@ -198,6 +198,17 @@ def test_part1_writes_a_video_and_scores_bicubic():
     assert score.temporal(restored["bicubic"], restored["bicubic"]) == 0.0
 
 
+def test_write_frame_accepts_a_noncontiguous_crop():
+    from part1.io import write_frame
+
+    image = np.random.default_rng(0).integers(0, 256, size=(40, 40, 3)).astype(np.float32)
+    crop = image[::2, ::2]
+    assert not crop.flags["C_CONTIGUOUS"]
+    path = Path("/tmp/noncontiguous_frame.png")
+    write_frame(path, crop)
+    assert path.stat().st_size > 0
+
+
 def test_mean_clip_scores_averages_only_complete_methods():
     from part1.score import mean_clip_scores
 
