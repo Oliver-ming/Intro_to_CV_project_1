@@ -53,6 +53,20 @@ def _install_attention_shim() -> None:
     sys.modules["xformers.ops"] = ops
 
 
+def _enhance(model, source: Path) -> int:
+    for chunk in (32, 16, 8):
+        model.max_chunk_len = chunk
+        try:
+            model.enhance_a_video(str(source), "a realistic video frame")
+            return chunk
+        except RuntimeError as exc:
+            if "out of memory" not in str(exc).lower() or chunk == 8:
+                raise
+            torch.cuda.empty_cache()
+            print(f"out of memory at chunk {chunk}, retrying shorter", flush=True)
+    raise RuntimeError("STAR did not finish a chunk length")
+
+
 def main() -> None:
     control = Path(str(WEIGHT) + ".aria2")
     if control.exists() or not WEIGHT.is_file() or WEIGHT.stat().st_size != EXPECTED:
@@ -96,9 +110,9 @@ def main() -> None:
                 max_chunk_len=32,
             )
         model.file_name = f"{clip}.mp4"
-        model.enhance_a_video(str(source), "a realistic video frame")
-        summary["clips"][clip] = {"frames": int(len(frames))}
-        print(clip, "done", flush=True)
+        chunk = _enhance(model, source)
+        summary["clips"][clip] = {"frames": int(len(frames)), "max_chunk_len": chunk}
+        print(clip, "done", chunk, flush=True)
     result = ROOT / "docs" / "results" / "star_inference.json"
     result.write_text(json.dumps(summary, indent=2) + "\n")
     print(json.dumps(summary, indent=2))

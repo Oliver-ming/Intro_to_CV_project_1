@@ -295,3 +295,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Skip auxiliary weights that are already in the Hugging Face cache, and recompile the report after REDS4 means are written.
 - Why: a second STAR start must not fail because the stage files were moved, and the PDF has to pick up the filled table.
 - Files: `scripts/install_star_aux_cache.py`, `scripts/reds_means.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- If official STAR runs out of GPU memory at chunk length 32, retry that clip at 16 and then 8.
+- Why: a 24 GB GPU may not hold 32 frames at 720×1280, and a failed clip should not end the REDS4 run.
+- Files: `scripts/run_star_official.py`, `docs/workload/log.md`.
