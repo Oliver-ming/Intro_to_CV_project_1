@@ -45,3 +45,31 @@ def score_vimeo(restored: np.ndarray, truth: np.ndarray, scorer: AlexLPIPS, ince
     if count >= 2:
         scores["fid"] = pool_distance(inception(restored), inception(truth))
     return scores
+
+
+def mean_clip_scores(clips: dict[str, dict]) -> dict[str, float] | None:
+    """Average one method across clips.
+
+    Returns None unless every clip has a numeric PSNR. Frame counts are summed.
+    """
+
+    scored = [
+        value
+        for value in clips.values()
+        if isinstance(value, dict) and ("psnr_rgb" in value or "psnr_y" in value)
+    ]
+    if len(scored) != len(clips) or not scored:
+        return None
+    totals: dict[str, float] = {}
+    counts: dict[str, int] = {}
+    frames = 0
+    for scores in scored:
+        frames += int(scores["frames"])
+        for key, value in scores.items():
+            if key == "frames" or isinstance(value, bool) or not isinstance(value, (int, float)):
+                continue
+            totals[key] = totals.get(key, 0.0) + float(value)
+            counts[key] = counts.get(key, 0) + 1
+    averaged = {key: totals[key] / counts[key] for key in totals}
+    averaged["frames"] = frames
+    return averaged

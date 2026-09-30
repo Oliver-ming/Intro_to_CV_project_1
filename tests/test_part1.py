@@ -198,6 +198,21 @@ def test_part1_writes_a_video_and_scores_bicubic():
     assert score.temporal(restored["bicubic"], restored["bicubic"]) == 0.0
 
 
+def test_mean_clip_scores_averages_only_complete_methods():
+    from part1.score import mean_clip_scores
+
+    complete = {
+        "000": {"psnr_rgb": 30.0, "ssim_rgb": 0.8, "frames": 100},
+        "011": {"psnr_rgb": 32.0, "ssim_rgb": 0.9, "frames": 100},
+    }
+    averaged = mean_clip_scores(complete)
+    assert averaged is not None
+    assert averaged["psnr_rgb"] == 31.0
+    assert averaged["frames"] == 200
+    waiting = {"000": {"psnr_rgb": 30.0, "frames": 100}, "011": {"frames": 100, "metrics": "waiting for ground truth"}}
+    assert mean_clip_scores(waiting) is None
+
+
 def test_reds_archive_is_not_ready_while_aria2_control_exists():
     import importlib.util
     import tempfile

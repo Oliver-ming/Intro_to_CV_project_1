@@ -277,3 +277,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Also cache the 609-byte Stable Video Diffusion VAE config next to the fp16 weights.
 - Why: STAR loads that config before sampling, and a missing tiny file would stall the run after the large CLIP download.
 - Files: `scripts/install_star_aux_cache.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Average a REDS4 method across the four clips only when every clip has a numeric PSNR. The report table says that mean explicitly. The compiled draft stays at 6 pages.
+- Why: one table row cannot be the score of a single clip, and an unfinished clip must not be averaged in as zero.
+- Files: `src/part1/score.py`, `tests/test_part1.py`, `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
