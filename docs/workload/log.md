@@ -289,3 +289,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Fill the REDS4 report row from clip scores when every clip has a PSNR, and ignore checkpoint-name fields in the metric json.
 - Why: the table is one number per method, and a metadata string must not block that average.
 - Files: `src/part1/score.py`, `scripts/reds_means.py`, `scripts/score_ready.py`, `scripts/run_part1.py`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Skip auxiliary weights that are already in the Hugging Face cache, and recompile the report after REDS4 means are written.
+- Why: a second STAR start must not fail because the stage files were moved, and the PDF has to pick up the filled table.
+- Files: `scripts/install_star_aux_cache.py`, `scripts/reds_means.py`, `docs/workload/log.md`.

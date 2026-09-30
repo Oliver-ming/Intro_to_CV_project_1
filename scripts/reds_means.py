@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -92,8 +94,17 @@ def main() -> None:
     MEANS.write_text(json.dumps(means, indent=2) + "\n")
     if PAPER.is_file():
         PAPER.write_text(fill_table(PAPER.read_text(), means))
+        _recompile()
     filled = [label for label, scores in means.items() if scores]
     print("filled", ", ".join(filled) if filled else "none", flush=True)
+
+
+def _recompile() -> None:
+    binary = shutil.which("tectonic") or "/tmp/tectonic-musl/tectonic"
+    if not Path(binary).is_file():
+        print("tectonic is not available; the table tex was updated", flush=True)
+        return
+    subprocess.call([binary, "main.tex"], cwd=ROOT / "paper")
 
 
 if __name__ == "__main__":

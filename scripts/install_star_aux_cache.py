@@ -47,11 +47,14 @@ def main() -> None:
     for item in FILES:
         source = STAGE / item["stage"]
         control = Path(str(source) + ".aria2")
-        if control.exists() or not source.is_file() or source.stat().st_size != item["size"]:
-            raise SystemExit(f"not complete: {source}")
         repo = HUB / item["repo"]
         blob = repo / "blobs" / item["oid"]
         snapshot = repo / "snapshots" / item["commit"] / item["name"]
+        if blob.is_file() and blob.stat().st_size == item["size"] and snapshot.is_symlink():
+            print(f"already cached {item['name']}", flush=True)
+            continue
+        if control.exists() or not source.is_file() or source.stat().st_size != item["size"]:
+            raise SystemExit(f"not complete: {source}")
         blob.parent.mkdir(parents=True, exist_ok=True)
         snapshot.parent.mkdir(parents=True, exist_ok=True)
         if blob.exists() or blob.is_symlink():
