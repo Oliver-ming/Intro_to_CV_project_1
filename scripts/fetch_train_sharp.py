@@ -25,6 +25,12 @@ def archive_ready(path: Path, expected: int) -> bool:
     return path.is_file() and path.stat().st_size == expected and not control.exists()
 
 
+def retry_pause(before: int, after: int, ready: bool) -> bool:
+    """Sleep before the next aria2 attempt only when this attempt made no progress."""
+
+    return not ready and after <= before
+
+
 def main() -> None:
     ZIP.parent.mkdir(parents=True, exist_ok=True)
     while not archive_ready(ZIP, EXPECTED):
@@ -50,9 +56,10 @@ def main() -> None:
                 URL,
             ]
         )
+        after = ZIP.stat().st_size if ZIP.is_file() else 0
         if archive_ready(ZIP, EXPECTED):
             break
-        if after <= before:
+        if retry_pause(before, after, False):
             time.sleep(20)
     destination = ROOT / "data" / "reds"
     with zipfile.ZipFile(ZIP) as archive:

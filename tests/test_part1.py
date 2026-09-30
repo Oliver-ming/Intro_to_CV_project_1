@@ -273,6 +273,9 @@ def test_reds_archive_is_not_ready_while_aria2_control_exists():
         assert module.archive_ready(archive, 8) is False
         control.unlink()
         assert module.archive_ready(archive, 8) is True
+        assert module.retry_pause(10, 10, False) is True
+        assert module.retry_pause(10, 11, False) is False
+        assert module.retry_pause(10, 10, True) is False
 
 
 def test_vimeo_pair_finds_low_and_high_trees():

@@ -367,3 +367,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Recorded the clip 000 certain-pixel count: 8640 pixels on 3 of 100 frames, array shape 100×720×1280.
 - Why: the hybrid prior is sparse on this driving clip, and an empty mask is still a valid blend.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- The ground-truth retry compared a variable that was never assigned, so a failed aria2 attempt would crash instead of waiting and trying again.
+- Why: the download has to finish and extract REDS4 before any numeric score can be computed.
+- Files: `scripts/fetch_train_sharp.py`, `tests/test_part1.py`, `docs/workload/log.md`.
