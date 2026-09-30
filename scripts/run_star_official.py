@@ -7,9 +7,13 @@ failure; this script is inference only.
 
 from __future__ import annotations
 
+import importlib.machinery
 import json
 import sys
+import types
 from pathlib import Path
+
+import torch
 
 ROOT = Path(__file__).resolve().parents[1]
 STAR_ROOT = ROOT / "third_party" / "STAR"
@@ -23,10 +27,37 @@ from part1.io import read_sequence, write_frame, write_video
 CLIPS = ("000", "011", "015", "020")
 
 
+def _install_attention_shim() -> None:
+    """STAR's U-Net imports xformers, which is pinned to an old torch.
+
+    The inference path calls memory_efficient_attention with one head per
+    batch row and no bias. PyTorch scaled-dot-product attention matches that
+    call, so the run does not install xformers 0.0.21.
+    """
+
+    if "xformers" in sys.modules:
+        return
+    ops = types.ModuleType("xformers.ops")
+
+    def memory_efficient_attention(query, key, value, attn_bias=None, op=None, p=0.0):
+        if attn_bias is not None:
+            raise NotImplementedError("this STAR path does not pass an attention bias")
+        return torch.nn.functional.scaled_dot_product_attention(query, key, value, dropout_p=p)
+
+    ops.memory_efficient_attention = memory_efficient_attention
+    module = types.ModuleType("xformers")
+    module.ops = ops
+    module.__spec__ = importlib.machinery.ModuleSpec("xformers", loader=None)
+    ops.__spec__ = importlib.machinery.ModuleSpec("xformers.ops", loader=None)
+    sys.modules["xformers"] = module
+    sys.modules["xformers.ops"] = ops
+
+
 def main() -> None:
     control = Path(str(WEIGHT) + ".aria2")
     if control.exists() or not WEIGHT.is_file() or WEIGHT.stat().st_size != EXPECTED:
         raise SystemExit(f"STAR light_deg.pt is not complete: {WEIGHT}")
+    _install_attention_shim()
     import video_super_resolution.scripts.inference_sr as inference_sr
 
     def _save_video(video, save_dir, file_name, fps=16.0):

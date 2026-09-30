@@ -205,3 +205,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Continue `train_sharp.zip` with aria2c from the stable dataset URL, and record which REDS4 rows already have videos.
 - Why: a single wget connection stayed near 100 KB/s after the CDN signature expired, and the report must not claim BasicVSR++ is still waiting to be run.
 - Files: `scripts/fetch_train_sharp.py`, `paper/main.tex`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Run official STAR inference without installing xformers 0.0.21. The U-Net's bias-free attention call goes through PyTorch scaled dot-product attention.
+- Why: the released checkpoint is on disk, and the old xformers pin would replace torch 2.11.
+- Files: `scripts/run_star_official.py`, `paper/main.tex`, `docs/workload/log.md`.

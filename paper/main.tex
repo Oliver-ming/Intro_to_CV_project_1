@@ -117,6 +117,8 @@ The row is judged by whether tLPIPS drops.
 If the released code has no LoRA interface, the row is a failure case.
 Pinned STAR \texttt{69b8bc53} trains ControlNet and parameters named \texttt{local}, not LoRA, so that row is the failure recorded in \texttt{docs/results/star\_lora\_attempt.json}.
 The released light-degradation checkpoint is the official inference row. Its download is separate from the LoRA failure.
+The released U-Net calls \texttt{xformers} attention, and that package is pinned to an older PyTorch.
+This run keeps torch~2.11 and uses scaled dot-product attention for the same bias-free call.
 
 The hybrid does not train a router.
 BasicVSR++ supplies the fidelity frame when a $4\times$ bicubic checkpoint matched to the benchmark is available~\cite{chan2022basicvsrpp}.

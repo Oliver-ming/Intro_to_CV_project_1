@@ -47,7 +47,7 @@ BasicVSR++ is the fidelity model. It uses the REDS4 bicubic checkpoint, 64 mid c
 CUDA_VISIBLE_DEVICES=3 ../env_cv/bin/python scripts/run_star_official.py
 ```
 
-This needs the complete `weights/star_light_deg.pt` (8165233536 bytes) and `ffmpeg`. The checkpoint is the official I2VGen-XL light-degradation model. Its training degradation is real-world, not bicubic. The published STAR requirements pin an older PyTorch; this environment keeps the installed torch 2.11 and installs `requirements-star.txt` instead. The course LoRA row is not run: `train_sr.py` has no LoRA parameters.
+This needs the complete `weights/star_light_deg.pt` (8165233536 bytes) and `ffmpeg`. The checkpoint is the official I2VGen-XL light-degradation model. Its training degradation is real-world, not bicubic. The published STAR requirements pin an older PyTorch and xformers 0.0.21. This environment keeps torch 2.11, installs `requirements-star.txt`, and uses scaled dot-product attention for the released U-Net's bias-free call. The course LoRA row is not run: `train_sr.py` has no LoRA parameters.
 
 ## Report
 
