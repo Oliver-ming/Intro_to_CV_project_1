@@ -12,7 +12,7 @@ Use `../env_cv`. From this directory:
 
 ## Data
 
-Official REDS archives go in `data/zips/` and are not committed. See `docs/manifests/downloads.md`. After `train_sharp.zip` and `train_sharp_bicubic.zip` finish, REDS4 clips `000`, `011`, `015`, and `020` are extracted under `data/reds/`.
+Official REDS archives go in `data/zips/` and are not committed. See `docs/manifests/downloads.md`. After `train_sharp.zip` and `train_sharp_bicubic.zip` finish, REDS4 clips `000`, `011`, `015`, and `020` are extracted under `data/reds/`. Resume a dropped ground-truth download with `../env_cv/bin/python scripts/fetch_train_sharp.py`. It keeps using the stable Hugging Face URL.
 
 The MIT Vimeo test packages return HTTP 403 from this machine, so the 30-clip subset is not available yet.
 

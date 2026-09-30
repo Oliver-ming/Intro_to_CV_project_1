@@ -116,7 +116,7 @@ Only injected LoRA weights are trained.
 The row is judged by whether tLPIPS drops.
 If the released code has no LoRA interface, the row is a failure case.
 Pinned STAR \texttt{69b8bc53} trains ControlNet and parameters named \texttt{local}, not LoRA, so that row is the failure recorded in \texttt{docs/results/star\_lora\_attempt.json}.
-Official STAR inference is still pending the released checkpoint.
+The released light-degradation checkpoint is the official inference row. Its download is separate from the LoRA failure.
 
 The hybrid does not train a router.
 BasicVSR++ supplies the fidelity frame when a $4\times$ bicubic checkpoint matched to the benchmark is available~\cite{chan2022basicvsrpp}.
@@ -142,19 +142,47 @@ Scores use 8-bit quantized frames.
 Full-reference scores require ground truth.
 A wild video, which we do not have yet, will be judged visually.
 
-\subsection{Status}
-Part~1 has written bicubic, Lanczos, EDSR, temporal-average, and unsharp videos for the four REDS4 clips, 100 frames each.
-Numeric tables are not filled in this draft: the REDS ground-truth archive and the Vimeo frame packages are still downloading, and the MIT Vimeo host returns HTTP 403 from the evaluation machine.
-EDVR, TecoGAN, STAR, Pyramid Flow, and the hybrid will be added to the same tables when their weights and frames are on disk.
-We will not invent those numbers.
+\subsection{What has been run}
+Table~\ref{tab:status} records the state of each row. Restored videos are 100 frames for every REDS4 clip that has been run. Numeric scores stay blank until \texttt{train\_sharp} is extracted. The ground-truth archive stopped at 13.67\,GB of 34.26\,GB when a signed CDN URL expired with HTTP 403; the download now continues from the stable Hugging Face URL. The MIT Vimeo host returns HTTP 403, so the 30-clip subset is not scored in this draft.
+
+\begin{table}[t]
+\centering
+\caption{REDS4 rows on the shared official $4\times$ bicubic input. A failure is a missing interface, not a skipped direction.}
+\label{tab:status}
+\small
+\begin{tabular}{ll}
+\hline
+Row & State \\
+\hline
+Bicubic, Lanczos & Videos written \\
+EDSR baseline, DIV2K $4\times$ & Videos written, not trained \\
+Temporal average, unsharp & Videos written, course kernels \\
+EDVR-L REDS bicubic & Checkpoint still downloading \\
+TecoGAN released & Failure: TensorFlow~1 checkpoint \\
+TecoGAN PyTorch substitute & Separate row, not the release \\
+BasicVSR++ REDS4 bicubic & Videos written, scores waiting \\
+Pyramid Flow midpoint & Failure: no such sampler entry \\
+STAR light-degradation & Checkpoint downloading \\
+STAR course LoRA & Failure: no LoRA parameters \\
+Disagreement-map hybrid & Waits for STAR frames \\
+\hline
+\end{tabular}
+\end{table}
+
+BasicVSR++ uses the released REDS4 bicubic checkpoint with 64 mid channels and 7 residual blocks~\cite{chan2022basicvsrpp}.
+The four clips are restored from \texttt{train\_sharp\_bicubic/X4}.
+YuNet is on disk for the hybrid face prior.
+The EAST text graph is still downloading; a missing graph leaves that prior empty and does not by itself fail the blend.
+Pyramid Flow, the released TecoGAN weights, and the STAR LoRA row are already recorded as failure cases in \texttt{docs/results/}.
+We will not fill the metric table with numbers from a different degradation or from a substitute checkpoint.
 
 \section{Conclusion}
 The pipeline separates official bicubic evaluation from course choices: the temporal-average kernel, the unsharp defaults, the Pyramid Flow midpoint, the STAR LoRA budget, and the disagreement map.
 Limitations follow from that split.
 Generative models trained on real-world degradations are scored on bicubic inputs, so a lower PSNR is not a pure architecture comparison.
-The Vimeo numbers will describe 30 frozen clips, not the full test set.
-TecoGAN's released checkpoint cannot run in the course environment.
-Future work is to finish the ground-truth scoring, to run EDVR and BasicVSR++ from their released bicubic weights, and to record Pyramid Flow and STAR either as conditioned restorations or as explicit failure cases.
+The Vimeo numbers, once the official test package is reachable, will describe 30 frozen clips, not the full test set.
+TecoGAN's released checkpoint cannot run in the course environment, and the PyTorch substitute is labeled as a different model.
+The remaining work is to finish REDS4 ground truth, to score the videos already written, and to run EDVR, official STAR, and the hybrid on the same low-resolution frames.
 
 {
 \small

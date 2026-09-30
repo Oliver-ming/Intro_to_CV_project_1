@@ -1,8 +1,8 @@
 """Resume the official REDS train_sharp archive and extract REDS4.
 
-Hugging Face redirects to a signed CDN URL. A dropped connection then retries
-that expired URL and gets HTTP 403. This script always restarts from the
-stable dataset URL and continues the existing zip. It extracts clips 000,
+Hugging Face redirects to a signed CDN URL. A single wget retry then hits
+that expired URL and gets HTTP 403. This script continues the existing zip
+with aria2c from the stable dataset URL. It extracts clips 000,
 011, 015, and 020 only after the archive is the published length.
 """
 
@@ -24,7 +24,27 @@ def main() -> None:
     ZIP.parent.mkdir(parents=True, exist_ok=True)
     while not ZIP.is_file() or ZIP.stat().st_size != EXPECTED:
         before = ZIP.stat().st_size if ZIP.is_file() else 0
-        subprocess.call(["wget", "-c", "--timeout=60", "--read-timeout=60", "-O", str(ZIP), URL])
+        subprocess.call(
+            [
+                "aria2c",
+                "-c",
+                "-x",
+                "16",
+                "-s",
+                "16",
+                "-k",
+                "1M",
+                "--file-allocation=none",
+                "--timeout=60",
+                "--max-tries=5",
+                "--summary-interval=30",
+                "-d",
+                str(ZIP.parent),
+                "-o",
+                ZIP.name,
+                URL,
+            ]
+        )
         after = ZIP.stat().st_size if ZIP.is_file() else 0
         if after == EXPECTED:
             break
