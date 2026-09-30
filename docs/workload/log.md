@@ -379,3 +379,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Checked the first official STAR restoration and the clip 011 certain mask. Clip 000 is 100 frames at 1280×720. Clip 011 marks 124291 pixels on 11 frames.
 - Why: the status table should say which restoration already exists, and the hybrid prior is not uniform across clips.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added official STAR to the clip 000 frame 50 comparison. The crop stays the bicubic patch at y=280, x=560.
+- Why: the generative restoration has to be visible next to the fidelity methods before scores exist.
+- Files: `scripts/make_reds_figure.py`, `paper/figures/reds4_000_frame050.png`, `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.

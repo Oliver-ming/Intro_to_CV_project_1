@@ -30,6 +30,7 @@ def main() -> None:
         "Bicubic": upsample(low, 4, "bicubic"),
         "EDVR-L": read_frame(_frame(ROOT / "outputs" / "part2" / "edvr" / "frames" / CLIP)),
         "BasicVSR++": read_frame(_frame(ROOT / "outputs" / "part3" / "basicvsrpp" / "frames" / CLIP)),
+        "STAR": read_frame(_frame(ROOT / "outputs" / "part3" / "star" / "frames" / CLIP)),
     }
     y0, x0 = _detail_origin(panels["Bicubic"])
     full = [_labeled(_fit(image, 426), name) for name, image in panels.items()]

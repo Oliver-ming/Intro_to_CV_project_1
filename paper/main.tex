@@ -201,7 +201,7 @@ YuNet and the EAST text graph are both on disk. An empty detector mask does not 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/reds4_000_frame050.png}
-\caption{Clip 000, frame 50, before ground-truth scoring. Top: bicubic, EDVR-L, and BasicVSR++. Bottom: the 160$\times$160 patch with the strongest bicubic detail. In that patch the car edges are softer after bicubic upsampling than after EDVR-L or BasicVSR++.}
+\caption{Clip 000, frame 50, before ground-truth scoring. Top: bicubic, EDVR-L, BasicVSR++, and official STAR. Bottom: the 160$\times$160 patch with the strongest bicubic detail. In that patch the car edges are softer after bicubic upsampling than after EDVR-L or BasicVSR++. STAR was trained on real-world degradation, so this bicubic input is outside that training degradation.}
 \label{fig:reds-visual}
 \end{figure}
 Pyramid Flow, the released TecoGAN weights, and the STAR LoRA row are already recorded as failure cases in \texttt{docs/results/}.
