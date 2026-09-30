@@ -10,10 +10,20 @@ from __future__ import annotations
 
 import json
 import sys
+import types
 from pathlib import Path
 
 import numpy as np
+import skimage.measure as skimage_measure
 import torch
+from skimage.metrics import structural_similarity
+
+if not hasattr(skimage_measure, "compare_ssim"):
+    skimage_measure.compare_ssim = structural_similarity
+if "IPython" not in sys.modules:
+    ipython = types.ModuleType("IPython")
+    ipython.embed = lambda *args, **kwargs: None
+    sys.modules["IPython"] = ipython
 
 ROOT = Path(__file__).resolve().parents[1]
 CODES = ROOT / "third_party" / "TecoGAN-PyTorch" / "codes"

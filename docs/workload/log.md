@@ -169,3 +169,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added a REDS4 runner for the skycrapers PyTorch TecoGAN. It records `released_weights: false` and writes videos under `outputs/part2/tecogan_not_official`.
 - Why: the released TensorFlow checkpoint cannot be loaded, and the substitute must stay labeled as a different model.
 - Files: `scripts/run_tecogan_not_official.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Pinned TecoGAN-PyTorch at `903b070bd7dda27fb29111e39af837d589506f95`. The runner can import `FRNet` after shimming an old scikit-image name and a missing IPython hook.
+- Why: the non-official bicubic generator has to load from that tree, separate from the released TensorFlow checkpoint.
+- Files: `third_party/PINS.md`, `scripts/run_tecogan_not_official.py`, `docs/workload/log.md`.
