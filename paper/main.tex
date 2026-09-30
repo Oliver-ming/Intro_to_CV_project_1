@@ -1,0 +1,163 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage[review]{cvpr}
+\input{author-kit-main/preamble}
+
+\definecolor{cvprblue}{rgb}{0.21,0.49,0.74}
+\usepackage[pagebackref,breaklinks,colorlinks,allcolors=cvprblue]{hyperref}
+
+\def\paperID{3201}
+\def\confName{CVPR}
+\def\confYear{2026}
+
+\title{Video Super-Resolution with Temporal Consistency\\
+on REDS4 and a Frozen Vimeo Subset}
+
+\author{Yuming Zhang\\
+The Hong Kong University of Science and Technology (Guangzhou)\\
+{\tt\small yzhang395@connect.hkust-gz.edu.cn}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Given a low-resolution video, we reconstruct a high-resolution video that recovers spatial detail and stays stable across frames.
+The shared input is the official $4\times$ bicubic release, not a downsample recomputed by our own kernel.
+Part~1 compares bicubic and Lanczos upsampling, a frame-wise EDSR baseline, and a course temporal average.
+Part~2 runs EDVR and records the released TecoGAN checkpoint as a TensorFlow model that this Python environment cannot load.
+Part~3 treats Pyramid Flow as a conditioned generator only when the sampler can start from a noisy bicubic upsample, runs STAR from its released weights, and blends BasicVSR++ with STAR through a disagreement map.
+REDS4 is scored on RGB with no border crop.
+A 30-clip Vimeo subset, frozen from the official test list, is scored on the Y channel.
+The public repository link will be added here when the remote exists.
+\end{abstract}
+
+\section{Introduction}
+Video super-resolution maps a low-resolution sequence to a high-resolution sequence.
+Doing this frame by frame can raise pixel scores while the restored detail flickers.
+The course task therefore asks for both spatial detail and temporal consistency.
+
+We follow one comparison protocol.
+Every method sees the same official $4\times$ bicubic low-resolution frames~\cite{nah2019reds,xue2019vimeo}.
+A model trained on a different degradation is still run on that input, and the table names its training degradation.
+We do not pretrain Pyramid Flow or STAR.
+Where the assignment asks for an exploration that the released code does not support, we keep the attempt and write the failure instead of substituting an unrelated sample.
+
+\section{Related Work}
+Single-image networks learn a mapping from a low-resolution patch to a high-resolution patch.
+SRCNN introduced a convolutional mapping~\cite{dong2015srcnn}.
+EDSR deepened residual blocks for bicubic super-resolution~\cite{lim2017edsr}.
+SRGAN traded distortion for sharper textures with an adversarial loss~\cite{ledig2017srgan}.
+These models do not look at neighboring frames.
+
+Video methods add alignment and fusion.
+EDVR aligns a short window with pyramid cascading deformable convolution and fuses it with temporal-spatial attention~\cite{wang2019edvr}.
+TDAN also aligns with deformable convolution over time~\cite{tian2020tdan}.
+BasicVSR argued that bidirectional propagation, feature alignment, and pixel-shuffle upsampling are the essential pieces~\cite{chan2021basicvsr}.
+BasicVSR++ adds second-order grid propagation and flow-guided deformable alignment~\cite{chan2022basicvsrpp}.
+
+Generative video models push the other side of the distortion--perception trade-off.
+TecoGAN uses a recurrent generator, a spatio-temporal discriminator, and a temporal loss, and it measures temporal change with tLP~\cite{chu2020tecogan}.
+Flow matching learns a vector field from noise to data~\cite{lipman2023flow}.
+Pyramid Flow applies that idea in a pyramid for text-to-video and image-to-video generation~\cite{jin2025pyramid}; it is not a published super-resolution model.
+STAR adapts a text-to-video backbone with ControlNet and a local insertion module for real-world video super-resolution~\cite{xie2025star}.
+LoRA is a low-rank update used as a course experiment here, not as STAR's training recipe~\cite{hu2022lora}.
+
+Quality is not one number.
+SSIM compares structure~\cite{wang2004ssim}.
+LPIPS compares deep features~\cite{zhang2018lpips}.
+REDS and Vimeo-90K supply the benchmark clips and the bicubic low-resolution track we evaluate~\cite{nah2019reds,xue2019vimeo}.
+
+\section{Method}
+\subsection{Shared input}
+REDS4 is clips 000, 011, 015, and 020, held out from the REDS training split.
+Low-resolution frames come from \texttt{train\_sharp\_bicubic/X4}, the MATLAB \texttt{imresize} bicubic track used by EDVR and BasicVSR.
+Our bicubic and Lanczos kernels only upsample those frames.
+They are checked against OpenCV and are not used to rebuild the benchmark input.
+
+The Vimeo benchmark is 30 seven-frame clips drawn once, without replacement, from BasicSR's 7824-clip official test list with numpy seed 0.
+Tables call this set ``Vimeo subset (30)''.
+They do not call it the full Vimeo-90K-T.
+
+\subsection{Part 1}
+Bicubic upsampling uses OpenCV's cubic ($a=-0.75$), four taps, and replicated borders.
+Lanczos uses radius 4, eight taps, and renormalized weights.
+Both map output pixel $i$ to source coordinate $(i+0.5)/\mathrm{scale}-0.5$.
+EDSR is the official baseline with 16 residual blocks and 64 features, loaded from the DIV2K $4\times$ checkpoint and not trained here~\cite{lim2017edsr}.
+
+The temporal average is a course binomial smoother, not a kernel from those papers.
+After bicubic upsampling, each frame is averaged with two neighbors on either side using weights $[1,4,6,4,1]/16$.
+Weights that fall off the clip are dropped and the rest are renormalized.
+Unsharp masking is an extra variant of that average,
+$y = x + 1.0\,(x - G_{\sigma=1}(x))$,
+then clamped to the valid range.
+Sigma 1 and amount 1 are course defaults.
+
+\subsection{Part 2}
+EDVR-L uses the released bicubic checkpoint through BasicSR: 128 features, five input frames, deformable groups 8, TSA fusion, and \texttt{reflection\_circle} padding~\cite{wang2019edvr}.
+The REDS blur-downsampling checkpoint is not this row.
+The Vimeo row, when the frames exist, uses the Vimeo-90K EDVR-L checkpoint.
+
+The released TecoGAN archive is a TensorFlow~1 checkpoint~\cite{chu2020tecogan}.
+\texttt{env\_cv} is Python~3.10 and cannot install TensorFlow~1, so those weights are not loaded.
+A later PyTorch $4\times$ checkpoint, if one runs, is reported separately and is not called the released model.
+
+\subsection{Part 3}
+Pyramid Flow's released model generates video from text, and its image-to-video path animates a clean first frame~\cite{jin2025pyramid}.
+A result enters the metric table only when the official sampler can noise the whole bicubic-upscaled clip and integrate from a start near the middle of its own schedule.
+The table records that start index and the number of function evaluations.
+Official image-to-video and pure text-to-video samples do not.
+If whole-clip intermediate noising is unsupported, this direction is a failure case.
+
+STAR's official row is inference with the released weights on the shared bicubic input.
+Its training degradation is real-world (OpenVid with a Real-ESRGAN-style pipeline), and the table says so~\cite{xie2025star}.
+A second row is a course LoRA experiment: rank 8, 200 steps, batch size 1, learning rate $10^{-4}$, on 20 Vimeo-90K training septuplets that are not in the test subset~\cite{hu2022lora}.
+Only injected LoRA weights are trained.
+The row is judged by whether tLPIPS drops.
+If the released code has no LoRA interface, the row is a failure case.
+
+The hybrid does not train a router.
+BasicVSR++ supplies the fidelity frame when a $4\times$ bicubic checkpoint matched to the benchmark is available~\cite{chan2022basicvsrpp}.
+The generative frame is official STAR inference.
+Face and text boxes come from OpenCV \texttt{FaceDetectorYN} (YuNet) and \texttt{TextDetectionModel\_EAST}, run on the bicubic-upscaled frame, with no dilation.
+Those detectors are course tools.
+Pixels inside the boxes are taken from BasicVSR++.
+Elsewhere the blend weight is the per-frame min--max normalized mean absolute RGB difference between the two restorations.
+There is no Gaussian smoothing and no extra global weight.
+This disagreement map is not a published uncertainty estimator.
+If STAR does not run, the hybrid is a failure case.
+
+\section{Experiments}
+\subsection{Protocol}
+PSNR and SSIM~\cite{wang2004ssim} on REDS4 use RGB and no border crop, including every frame, matching EDVR and BasicVSR.
+On the Vimeo subset they use the Y channel and no border crop.
+LPIPS uses AlexNet on RGB~\cite{zhang2018lpips}.
+tLPIPS is TecoGAN's tLP: the absolute difference between the LPIPS of two consecutive restored frames and the LPIPS of the two corresponding ground-truth frames~\cite{chu2020tecogan}.
+We report that value, not the $\times 100$ display scale used in the paper's tables.
+FID pools the restored frames against the ground-truth frames of that set.
+The report states the frame count, so the number is not compared with a full-dataset paper FID.
+Scores use 8-bit quantized frames.
+Full-reference scores require ground truth.
+A wild video, which we do not have yet, will be judged visually.
+
+\subsection{Status}
+Part~1 has written bicubic, Lanczos, EDSR, temporal-average, and unsharp videos for the four REDS4 clips, 100 frames each.
+Numeric tables are not filled in this draft: the REDS ground-truth archive and the Vimeo frame packages are still downloading, and the MIT Vimeo host returns HTTP 403 from the evaluation machine.
+EDVR, TecoGAN, STAR, Pyramid Flow, and the hybrid will be added to the same tables when their weights and frames are on disk.
+We will not invent those numbers.
+
+\section{Conclusion}
+The pipeline separates official bicubic evaluation from course choices: the temporal-average kernel, the unsharp defaults, the Pyramid Flow midpoint, the STAR LoRA budget, and the disagreement map.
+Limitations follow from that split.
+Generative models trained on real-world degradations are scored on bicubic inputs, so a lower PSNR is not a pure architecture comparison.
+The Vimeo numbers will describe 30 frozen clips, not the full test set.
+TecoGAN's released checkpoint cannot run in the course environment.
+Future work is to finish the ground-truth scoring, to run EDVR and BasicVSR++ from their released bicubic weights, and to record Pyramid Flow and STAR either as conditioned restorations or as explicit failure cases.
+
+{
+\small
+\bibliographystyle{ieeenat_fullname}
+\bibliography{refs}
+}
+
+\end{document}

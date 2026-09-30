@@ -31,3 +31,14 @@ PYTHONPATH=third_party/BasicSR ../env_cv/bin/python scripts/run_edvr.py
 ```
 
 This needs `weights/EDVR_L_x4_SR_REDS_official-9f5f5039.pth` and the extracted REDS4 low-resolution frames. It uses the pinned BasicSR EDVR-L: five frames and `reflection_circle` padding.
+
+## Report
+
+The CVPR draft is `paper/main.tex`. Numeric tables stay empty until the ground-truth frames are on disk. Compile, once LaTeX is installed, from `paper/`:
+
+```bash
+TEXINPUTS=author-kit-main: pdflatex main
+bibtex main
+TEXINPUTS=author-kit-main: pdflatex main
+TEXINPUTS=author-kit-main: pdflatex main
+```

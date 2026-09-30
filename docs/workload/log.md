@@ -127,3 +127,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Froze the Vimeo subset (30 test clips) and the adaptation list (20 training clips) with numpy Generator seed 0, from BasicSR's official 7824-clip test list and training list.
 - Why: the subset has to be fixed before the Vimeo frames themselves are reachable, and the tables must not be described as the full Vimeo-90K-T.
 - Files: `scripts/freeze_vimeo_lists.py`, `docs/manifests/vimeo-subset.txt`, `docs/manifests/vimeo-adaptation.txt`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Drafted the CVPR report in `paper/main.tex` with the agreed method and metric protocol. Experiment numbers are left blank because the REDS ground truth and the Vimeo frames are not on disk.
+- Why: the report has to describe official bicubic evaluation and the course choices separately, and it must not invent scores.
+- Files: `paper/main.tex`, `paper/refs.bib`, `README.md`, `docs/workload/log.md`.
