@@ -1,0 +1,6 @@
+{
+  "commit": "a012faa1dc4d71301a7a153c7f9554c081947ea2",
+  "source": "pyramid_dit/pyramid_dit_for_video_gen_pipeline.py",
+  "entered_metric_table": false,
+  "reason": "generate_i2v takes one clean PIL image and keeps that latent as history. generate samples from noise. The pinned source has no entry point that noises a whole bicubic-upscaled clip and integrates from the middle of the sampler."
+}

@@ -107,7 +107,7 @@ Pyramid Flow's released model generates video from text, and its image-to-video 
 A result enters the metric table only when the official sampler can noise the whole bicubic-upscaled clip and integrate from a start near the middle of its own schedule.
 The table records that start index and the number of function evaluations.
 Official image-to-video and pure text-to-video samples do not.
-If whole-clip intermediate noising is unsupported, this direction is a failure case.
+The pinned Pyramid Flow source (\texttt{a012faa1}) exposes only those two entry points, so this direction is recorded as a failure case in \texttt{docs/results/pyramid\_flow\_attempt.json}.
 
 STAR's official row is inference with the released weights on the shared bicubic input.
 Its training degradation is real-world (OpenVid with a Real-ESRGAN-style pipeline), and the table says so~\cite{xie2025star}.

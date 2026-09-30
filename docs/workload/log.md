@@ -139,3 +139,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added the course face prior. A blank frame produces an empty mask with YuNet. EAST stays empty until `frozen_east_text_detection.pb` is present.
 - Why: Direction C needs face and text boxes on the bicubic-upscaled frame, and a missing text model must not be treated as a failed hybrid.
 - Files: `src/part3/detectors.py`, `tests/test_part1.py`, `docs/manifests/downloads.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Inspected pinned Pyramid Flow `a012faa1`. `generate_i2v` takes one clean image; `generate` samples from noise. There is no whole-clip midpoint entry point, so Direction A is a failure case.
+- Why: the course rule only counts a restoration that starts from a noisy bicubic-upscaled clip, and the released interface does not provide that.
+- Files: `scripts/record_pyramid_flow_failure.py`, `docs/results/pyramid_flow_attempt.json`, `third_party/PINS.md`, `paper/main.tex`, `docs/workload/log.md`.
