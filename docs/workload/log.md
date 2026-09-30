@@ -133,3 +133,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Drafted the CVPR report in `paper/main.tex` with the agreed method and metric protocol. Experiment numbers are left blank because the REDS ground truth and the Vimeo frames are not on disk.
 - Why: the report has to describe official bicubic evaluation and the course choices separately, and it must not invent scores.
 - Files: `paper/main.tex`, `paper/refs.bib`, `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added the course face prior. A blank frame produces an empty mask with YuNet. EAST stays empty until `frozen_east_text_detection.pb` is present.
+- Why: Direction C needs face and text boxes on the bicubic-upscaled frame, and a missing text model must not be treated as a failed hybrid.
+- Files: `src/part3/detectors.py`, `tests/test_part1.py`, `docs/manifests/downloads.md`, `docs/workload/log.md`.

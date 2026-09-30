@@ -135,6 +135,19 @@ def test_vimeo_lists_match_the_frozen_seed_draw():
     assert set(subset).isdisjoint(adaptation)
 
 
+def test_blank_frame_has_no_face_prior_when_yunet_is_present():
+    from pathlib import Path
+    from part3.detectors import YUNET, certain_mask
+
+    if not YUNET.is_file():
+        return
+    frame = np.zeros((64, 64, 3), dtype=np.float32)
+    mask = certain_mask(frame)
+    assert mask.shape == (64, 64)
+    assert not mask.any()
+    assert Path(YUNET).name.startswith("face_detection_yunet")
+
+
 def test_disagreement_map_sends_certain_pixels_to_fidelity():
     from part3.hybrid import blend
 
