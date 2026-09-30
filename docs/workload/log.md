@@ -391,3 +391,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Recorded the clip 015 certain-pixel count: 16384 pixels on 2 of 100 frames.
 - Why: the face and text prior stays sparse, and the report should say so before the hybrid is blended.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- The REDS4 ground truth is extracted, and the 7-frame Vimeo EDVR-L checkpoint is 82850094 bytes with 264 tensors. The report no longer says the ground-truth download is stuck at 13.67 GB.
+- Why: scores can be computed on REDS4 now, and the Vimeo weight must not be confused with the 5-frame REDS model while the MIT frames stay unavailable.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/manifests/downloads.md`, `docs/workload/log.md`.

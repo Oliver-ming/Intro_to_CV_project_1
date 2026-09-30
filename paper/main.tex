@@ -168,7 +168,7 @@ Full-reference scores require ground truth.
 A wild video, which we do not have yet, will be judged visually.
 
 \subsection{What has been run}
-Table~\ref{tab:status} records the state of each row. Restored videos are 100 frames for every REDS4 clip that has been run. Numeric scores stay blank until \texttt{train\_sharp} is extracted. The ground-truth archive stopped at 13.67\,GB of 34.26\,GB when a signed CDN URL expired with HTTP 403; the download now continues from the stable Hugging Face URL. The MIT Vimeo host returns HTTP 403, so the 30-clip subset is not scored in this draft.
+Table~\ref{tab:status} records the state of each row. Restored videos are 100 frames for every REDS4 clip that has been run. \texttt{train\_sharp} is extracted: 100 frames for clips 000, 011, 015, and 020. Numeric scores stay blank in the table until every clip of a method has a PSNR. The MIT Vimeo host returns HTTP 403, so the 30-clip subset is not scored. The 7-frame Vimeo EDVR-L checkpoint is on disk and is not loaded into the 5-frame REDS model.
 
 \begin{table}[t]
 \centering
@@ -182,10 +182,10 @@ Row & State \\
 Bicubic, Lanczos & Videos written \\
 EDSR baseline, DIV2K $4\times$ & Videos written, not trained \\
 Temporal average, unsharp & Videos written, course kernels \\
-EDVR-L REDS bicubic & Videos written, scores waiting \\
+EDVR-L REDS bicubic & Videos written, scoring \\
 TecoGAN released & Failure: TensorFlow~1 checkpoint \\
-TecoGAN PyTorch substitute & Videos written, not the release \\
-BasicVSR++ REDS4 bicubic & Videos written, scores waiting \\
+TecoGAN PyTorch substitute & Videos written, scoring, not the release \\
+BasicVSR++ REDS4 bicubic & Videos written, scoring \\
 Pyramid Flow midpoint & Failure: no such sampler entry \\
 STAR light degradation & Clip 000 restored \\
 STAR course LoRA & Failure: no LoRA parameters \\
