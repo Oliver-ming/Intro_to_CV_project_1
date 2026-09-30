@@ -1,0 +1,3 @@
+# Project files, git history, and the workload log live in Project_1
+
+Course work is versioned only inside Project_1. The Python environment and the other project folders stay outside this repository. Our code goes under `src/`. Upstream checkouts go under `third_party/` and are pinned by URL and commit in `third_party/PINS.md`; the cloned trees themselves are not committed. Decisions stay in `docs/adr/`. Dataset files and generated outputs stay out of git; clip lists and weight sources are committed as manifests. `docs/workload/log.md` records each change in the same commit as that change. A commit is one change that can be explained on its own.

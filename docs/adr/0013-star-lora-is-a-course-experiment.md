@@ -1,0 +1,3 @@
+# The STAR LoRA row is a course experiment
+
+This narrows ADR-0008 and the STAR clause in ADR-0001. The official STAR row is unchanged: released weights, shared 4× bicubic input, training degradation labeled as real-world (OpenVid with a Real-ESRGAN-style pipeline). STAR trains ControlNet and LIEM, not LoRA. The second row is a course experiment: LoRA at rank 8 on 20 fixed Vimeo-90K training septuplets, never REDS and never the Vimeo subset, judged by whether tLPIPS drops. Rank 8 and the 20-clip set are not part of the paper. If the released code has no LoRA interface, that row is a failure case and is not a STAR reproduction.

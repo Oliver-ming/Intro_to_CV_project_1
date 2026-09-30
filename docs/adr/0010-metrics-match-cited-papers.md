@@ -1,0 +1,3 @@
+# Metrics follow the cited papers, split by benchmark
+
+ADR-0003 is superseded. REDS4 PSNR and SSIM are computed on RGB with no border crop, matching EDVR and BasicVSR. On the Vimeo subset they are computed on the Y channel, also with no border crop, matching BasicVSR outside REDS. LPIPS stays AlexNet on RGB. tLPIPS is TecoGAN's tLP: the absolute difference between the LPIPS of two consecutive restored frames and the LPIPS of the two corresponding ground-truth frames. The table reports that value, not the official code's ×100 display scale. FID stays a pooled small-sample score with the frame count stated. Full-reference scores apply only to benchmark clips.

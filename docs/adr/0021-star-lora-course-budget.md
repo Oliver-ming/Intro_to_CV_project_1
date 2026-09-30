@@ -1,0 +1,3 @@
+# The STAR LoRA row uses a course step budget
+
+This narrows ADR-0013. The official STAR inference row is unchanged. The second row optimizes only injected LoRA weights at rank 8. It does not train ControlNet or LIEM. The budget is a course choice, not the STAR paper: 200 optimizer steps, batch size 1, learning rate 1e-4, on one GPU, using only the 20 adaptation clips. The report states the step count and whether tLPIPS dropped relative to the official row. STAR itself trains ControlNet and LIEM for 15K iterations at batch size 8 and learning rate 5e-5. Those figures are not this experiment. If LoRA cannot be attached to the released code, the row is a failure case.

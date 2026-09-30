@@ -1,0 +1,3 @@
+# Part 3 attempts all three directions at inference depth
+
+The assignment asks for at least one Part 3 direction. We attempt all three — Pyramid Flow, STAR, and the uncertainty-aware hybrid — because the course grade treats an unfinished direction as a discussed failure, not as permission to skip it. Each direction must produce comparable restored videos and metrics on the mandatory data. Generative models run from official weights, with light adaptation only where the assignment names it (STAR LoRA or an adapter). We do not pretrain Pyramid Flow or STAR from scratch. The pixel-wise uncertainty router in the hybrid pipeline is our own code. A direction that does not fit in 24GB or whose official code cannot be run is written up as a failure case.

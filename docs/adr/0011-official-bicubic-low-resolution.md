@@ -1,0 +1,3 @@
+# Benchmark low-resolution frames are the official bicubic release
+
+REDS4 uses the official `train_sharp` and `train_sharp_bicubic/X4` pairs, the MATLAB `imresize` 4× bicubic track reported by EDVR and BasicVSR. `train_blur_bicubic` and any recomputed downsample are not this input. The Vimeo subset takes its low-resolution frames from `vimeo_super_resolution_test.zip`. A clip missing from that release is downsampled with MATLAB `imresize(..., 1/4, 'bicubic')`, or a bit-identical reimplementation, never with OpenCV `INTER_CUBIC`. The project's bicubic and Lanczos implementations only upsample those official low-resolution frames.

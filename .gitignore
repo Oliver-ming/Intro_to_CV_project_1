@@ -1,0 +1,9 @@
+/data/
+/outputs/
+/third_party/*
+!/third_party/PINS.md
+
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/

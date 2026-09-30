@@ -1,0 +1,3 @@
+# Every method sees the official bicubic low-resolution release
+
+This supersedes ADR-0002 and matches ADR-0011. The shared input is the official 4× bicubic low-resolution release: REDS `train_sharp_bicubic/X4`, and for Vimeo the official super-resolution test package or MATLAB `imresize` bicubic when a clip is missing from that package. It is not a downsample recomputed by our own kernel. Part 1 and Part 2 prefer official weights trained to invert that same degradation. A checkpoint trained on another degradation is still run on this input, and the table names its training degradation, so a PSNR gap is not read as a pure architecture comparison. STAR and Pyramid Flow use the same input; a lower PSNR there is reported as the accuracy–perception trade-off.

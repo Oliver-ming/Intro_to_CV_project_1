@@ -1,0 +1,3 @@
+# Face and text priors are course detectors
+
+This narrows ADR-0014. Certain pixels are the union of boxes from two course detectors run on the bicubic-upscaled frame: OpenCV `FaceDetectorYN` (YuNet) for faces, and OpenCV DNN `TextDetectionModel_EAST` with the separate weight file `frozen_east_text_detection.pb` for text. Boxes are not dilated. These detectors are not modules of EDVR, BasicVSR++, STAR, or TecoGAN. If a detector does not load, its prior is absent, the certain-pixel mask may be empty, and the disagreement-map blend still runs. The report says the prior was unavailable. An empty mask is not a failed hybrid.

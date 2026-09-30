@@ -1,0 +1,3 @@
+# Part 2 runs PyTorch checkpoints in env_cv
+
+EDVR inference uses BasicSR. REDS4 uses the EDVR-L 4× weights trained on REDS bicubic degradation; the Vimeo subset uses the EDVR-L 4× weights trained on Vimeo-90K. If REDS publishes only a blur-downsampling checkpoint, that checkpoint is still run on our bicubic input and its training degradation is named in the table. TecoGAN’s official tree is TensorFlow 1 and cannot be installed into env_cv, which is Python 3.10. We use a PyTorch implementation that loads the released generator weights. If those weights cannot be loaded, the official path is a failure case, and a runnable PyTorch 4× checkpoint is reported separately and labeled as not the released weights.

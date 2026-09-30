@@ -1,0 +1,3 @@
+# The temporal-average kernel is a course baseline
+
+This supersedes ADR-0005. The reading is unchanged: after bicubic upscaling, each frame is averaged with two frames on either side. The weights are [1, 4, 6, 4, 1] / 16, renormalized where the window runs off the clip. That kernel is a course binomial smoother. EDSR, EDVR, BasicVSR, and TecoGAN do not specify it. Bicubic and Lanczos remain our own upsamplers, checked against OpenCV, and they only enlarge the official low-resolution frames. EDSR stays frame-wise inference with the official DIV2K 4× bicubic weights and is not trained on the mandatory path. Unsharp masking stays an extra version of the temporal average, not its own row.
