@@ -76,6 +76,7 @@ Our bicubic and Lanczos kernels only upsample those frames.
 They are checked against OpenCV and are not used to rebuild the benchmark input.
 
 The Vimeo benchmark is 30 seven-frame clips drawn once, without replacement, from BasicSR's 7824-clip official test list with numpy seed 0.
+The frozen list begins 00071/0454, 00080/0999, 00061/0846, 00053/0310, and 00075/0384.
 Tables call this set ``Vimeo subset (30)''.
 They do not call it the full Vimeo-90K-T.
 
@@ -95,6 +96,7 @@ Sigma 1 and amount 1 are course defaults.
 
 \subsection{Part 2}
 EDVR-L uses the released bicubic checkpoint through BasicSR: 128 features, five input frames, deformable groups 8, TSA fusion, and \texttt{reflection\_circle} padding~\cite{wang2019edvr}.
+On a 100-frame clip the window for the first frame is indices 4, 3, 0, 1, 2.
 The REDS blur-downsampling checkpoint is not this row.
 The Vimeo row, when the frames exist, uses the Vimeo-90K EDVR-L checkpoint.
 
@@ -126,7 +128,12 @@ The generative frame is official STAR inference.
 Face and text boxes come from OpenCV \texttt{FaceDetectorYN} (YuNet) and \texttt{TextDetectionModel\_EAST}, run on the bicubic-upscaled frame, with no dilation.
 Those detectors are course tools.
 Pixels inside the boxes are taken from BasicVSR++.
-Elsewhere the blend weight is the per-frame min--max normalized mean absolute RGB difference between the two restorations.
+Elsewhere the blend weight is the per-frame min--max normalized mean absolute RGB difference between the fidelity frame $f$ and the generative frame $g$,
+\begin{equation}
+w = \mathrm{norm}\!\left(\frac{1}{3}\sum_{c=1}^{3}|f_c-g_c|\right),
+\end{equation}
+and the restored frame is $(1-w)f + wg$.
+Certain pixels set $w=0$.
 There is no Gaussian smoothing and no extra global weight.
 This disagreement map is not a published uncertainty estimator.
 If STAR does not run, the hybrid is a failure case.
@@ -136,8 +143,16 @@ If STAR does not run, the hybrid is a failure case.
 PSNR and SSIM~\cite{wang2004ssim} on REDS4 use RGB and no border crop, including every frame, matching EDVR and BasicVSR.
 On the Vimeo subset they use the Y channel and no border crop.
 LPIPS uses AlexNet on RGB~\cite{zhang2018lpips}.
-tLPIPS is TecoGAN's tLP: the absolute difference between the LPIPS of two consecutive restored frames and the LPIPS of the two corresponding ground-truth frames~\cite{chu2020tecogan}.
+tLPIPS is TecoGAN's tLP~\cite{chu2020tecogan}.
+With $d$ the AlexNet LPIPS of two frames,
+\begin{equation}
+\mathrm{tLPIPS} = \frac{1}{T-1}\sum_{t=2}^{T}\bigl|d(\hat{x}_t,\hat{x}_{t-1}) - d(x_t,x_{t-1})\bigr|.
+\end{equation}
 We report that value, not the $\times 100$ display scale used in the paper's tables.
+On the Vimeo subset, PSNR and SSIM use the BT.601 luma of an RGB frame scaled to $[0,1]$,
+\begin{equation}
+Y = 65.481R + 128.553G + 24.966B + 16.
+\end{equation}
 FID pools the restored frames against the ground-truth frames of that set.
 The report states the frame count, so the number is not compared with a full-dataset paper FID.
 Scores use 8-bit quantized frames.
@@ -184,13 +199,24 @@ YuNet and the EAST text graph are both on disk. An empty detector mask does not 
 Pyramid Flow, the released TecoGAN weights, and the STAR LoRA row are already recorded as failure cases in \texttt{docs/results/}.
 We will not fill the metric table with numbers from a different degradation or from a substitute checkpoint.
 
+\subsection{Recorded failures}
+Three rows are failures because the released interface does not implement the course request.
+The TecoGAN archive is 11288778 bytes and contains \texttt{TecoGAN.data-00000-of-00001}, \texttt{TecoGAN.index}, and \texttt{TecoGAN.meta}.
+Those are TensorFlow~1 checkpoint shards. No PyTorch state dict is in the archive, and the course environment cannot install TensorFlow~1.
+Pyramid Flow at \texttt{a012faa1} has \texttt{generate}, which samples from noise, and \texttt{generate\_i2v}, which keeps one clean image latent as history.
+It has no call that noises a whole bicubic-upscaled clip and integrates from the sampler midpoint, so that row stays out of the metric table.
+STAR at \texttt{69b8bc53} optimizes \texttt{VideoControlNet} and parameters whose names contain \texttt{local}.
+The optimizer list has no LoRA weights, so rank 8, 200 steps, batch size 1, and learning rate $10^{-4}$ were not run.
+A PyTorch TecoGAN trained on Vimeo bicubic data may still be reported later, and it will be labeled as a substitute.
+
 \section{Conclusion}
 The pipeline separates official bicubic evaluation from course choices: the temporal-average kernel, the unsharp defaults, the Pyramid Flow midpoint, the STAR LoRA budget, and the disagreement map.
 Limitations follow from that split.
 Generative models trained on real-world degradations are scored on bicubic inputs, so a lower PSNR is not a pure architecture comparison.
 The Vimeo numbers, once the official test package is reachable, will describe 30 frozen clips, not the full test set.
 TecoGAN's released checkpoint cannot run in the course environment, and the PyTorch substitute is labeled as a different model.
-The remaining work is to finish REDS4 ground truth, to score the videos already written, and to run EDVR, official STAR, and the hybrid on the same low-resolution frames.
+Part~1, EDVR-L, and BasicVSR++ already have REDS4 videos.
+The remaining work is to finish the ground-truth archive, to score those videos, and to finish official STAR and the hybrid on the same low-resolution frames.
 
 {
 \small

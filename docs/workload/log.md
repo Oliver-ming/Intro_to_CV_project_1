@@ -223,3 +223,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Prefetch the OpenCLIP ViT-H-14 bin and the Stable Video Diffusion fp16 VAE, then install them into the Hugging Face cache before STAR inference.
 - Why: the official loader stalled with a zero-byte CLIP download, so the released checkpoint never started sampling.
 - Files: `scripts/install_star_aux_cache.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Wrote the REDS4 luma and tLPIPS definitions, the disagreement-map blend, the EDVR edge window, and the three recorded failure cases into the report.
+- Why: the draft has to state the scoring rules and the failed interfaces before the ground-truth numbers exist.
+- Files: `paper/main.tex`, `docs/workload/log.md`.
