@@ -187,7 +187,7 @@ TecoGAN released & Failure: TensorFlow~1 checkpoint \\
 TecoGAN PyTorch substitute & Videos written, not the release \\
 BasicVSR++ REDS4 bicubic & Videos written, scores waiting \\
 Pyramid Flow midpoint & Failure: no such sampler entry \\
-STAR light degradation & Inference running \\
+STAR light degradation & Clip 000 restored \\
 STAR course LoRA & Failure: no LoRA parameters \\
 Disagreement-map hybrid & Waits for STAR frames \\
 \hline
@@ -269,6 +269,7 @@ BasicVSR++ runs the low-resolution clip as one recurrent sequence, with 64 mid c
 The released REDS4 checkpoint already contains SpyNet.
 Official STAR uses the light-degradation I2VGen-XL weights, the fast solver, and 15 function evaluations.
 Chunks of 2 or more frames at 720$\times$1280 request about 31\,GB and do not fit in 24\,GB, so this run uses one frame at a time.
+Clip 000 is restored: 100 frames at 720$\times$1280.
 REDS has no caption, so the text condition is a generic description of a real scene.
 That model was trained on real-world degradation, not on bicubic REDS, and the score table will say so.
 The hybrid detects faces with YuNet and text with EAST on the bicubic-upscaled low-resolution frame.
@@ -277,6 +278,7 @@ Pixels inside a box are copied from BasicVSR++.
 Pixels outside a box use the disagreement map.
 If a detector returns no boxes, the blend still runs.
 On clip 000 the two detectors together mark 8640 pixels, and only 3 of the 100 frames contain any box.
+On clip 011 they mark 124291 pixels across 11 frames.
 The course temporal average is applied after bicubic upsampling.
 Its weights are $[1,4,6,4,1]/16$.
 At the first frame, the two weights that would read before the clip are dropped and the remaining weights are renormalized.

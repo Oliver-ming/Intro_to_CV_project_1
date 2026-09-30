@@ -373,3 +373,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - The ground-truth retry compared a variable that was never assigned, so a failed aria2 attempt would crash instead of waiting and trying again.
 - Why: the download has to finish and extract REDS4 before any numeric score can be computed.
 - Files: `scripts/fetch_train_sharp.py`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Checked the first official STAR restoration and the clip 011 certain mask. Clip 000 is 100 frames at 1280×720. Clip 011 marks 124291 pixels on 11 frames.
+- Why: the status table should say which restoration already exists, and the hybrid prior is not uniform across clips.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
