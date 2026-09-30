@@ -75,6 +75,10 @@ def main() -> None:
     output_root.mkdir(parents=True, exist_ok=True)
     (output_root / "metrics.json").write_text(json.dumps(summary, indent=2) + "\n")
     print(json.dumps(summary, indent=2))
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from reds_means import main as write_means
+
+    write_means()
 
 
 if __name__ == "__main__":

@@ -331,3 +331,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Documented that official STAR uses one frame at a time on this 24 GB GPU.
 - Why: the README still described the run as if the released 32-frame window fit.
 - Files: `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Score REDS4 again after STAR and the hybrid finish, and refresh the report table from the hybrid's own metrics.
+- Why: ground truth may be extracted before those frames exist, and the first scoring pass would leave their rows blank.
+- Files: `scripts/run_star_official.py`, `scripts/run_hybrid.py`, `docs/workload/log.md`.

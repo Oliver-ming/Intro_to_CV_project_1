@@ -117,6 +117,11 @@ def main() -> None:
     result = ROOT / "docs" / "results" / "star_inference.json"
     result.write_text(json.dumps(summary, indent=2) + "\n")
     print(json.dumps(summary, indent=2))
+    if any((ROOT / "data" / "reds" / "train" / "train_sharp").glob("*/*.png")):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from score_ready import main as score_all
+
+        score_all()
 
 
 if __name__ == "__main__":
