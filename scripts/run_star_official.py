@@ -68,6 +68,11 @@ def _enhance(model, source: Path) -> int:
     raise RuntimeError("STAR did not finish a chunk length")
 
 
+def _write_summary(path: Path, summary: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(summary, indent=2) + "\n")
+
+
 def main() -> None:
     control = Path(str(WEIGHT) + ".aria2")
     if control.exists() or not WEIGHT.is_file() or WEIGHT.stat().st_size != EXPECTED:
@@ -88,6 +93,7 @@ def main() -> None:
 
     output_root = ROOT / "outputs" / "part3" / "star"
     output_root.mkdir(parents=True, exist_ok=True)
+    result = ROOT / "docs" / "results" / "star_inference.json"
     summary = {
         "checkpoint": "I2VGen-XL-based/light_deg.pt",
         "training_degradation": "real-world light degradation, not bicubic",
@@ -99,6 +105,13 @@ def main() -> None:
         low_dir = ROOT / "data" / "reds" / "train" / "train_sharp_bicubic" / "X4" / clip
         frames = read_sequence(sorted(low_dir.glob("*.png")))
         source = output_root / f"{clip}_lr.mp4"
+        frame_dir = output_root / "frames" / clip
+        existing = sorted(frame_dir.glob("*.png")) if frame_dir.is_dir() else []
+        if len(existing) == len(frames):
+            summary["clips"][clip] = {"frames": int(len(frames)), "max_chunk_len": "reused"}
+            print(clip, "reused", flush=True)
+            _write_summary(result, summary)
+            continue
         write_video(source, frames, fps=8)
         if model is None:
             model = STAR(
@@ -114,8 +127,7 @@ def main() -> None:
         chunk = _enhance(model, source)
         summary["clips"][clip] = {"frames": int(len(frames)), "max_chunk_len": chunk}
         print(clip, "done", chunk, flush=True)
-    result = ROOT / "docs" / "results" / "star_inference.json"
-    result.write_text(json.dumps(summary, indent=2) + "\n")
+        _write_summary(result, summary)
     print(json.dumps(summary, indent=2))
     if any((ROOT / "data" / "reds" / "train" / "train_sharp").glob("*/*.png")):
         sys.path.insert(0, str(ROOT / "scripts"))

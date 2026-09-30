@@ -343,3 +343,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Write restored frames from a contiguous array so OpenCV accepts cropped tensors.
 - Why: a non-contiguous crop already failed in the Part 1 figure, and STAR will save the same kind of array.
 - Files: `src/part1/io.py`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Skip a REDS4 clip in official STAR when its frame folder is already complete, and write the summary after every clip.
+- Why: one frame at a time takes long enough that a later failure should not throw away finished clips.
+- Files: `scripts/run_star_official.py`, `docs/workload/log.md`.
