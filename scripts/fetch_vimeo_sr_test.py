@@ -25,7 +25,7 @@ URLS = (
 SUBSET = ROOT / "docs" / "manifests" / "vimeo-subset.txt"
 DESTINATION = ROOT / "data" / "vimeo"
 _LOW = {"low_resolution", "low", "lr", "bicubic"}
-_HIGH = {"high_resolution", "target", "gt", "sharp"}
+_HIGH = {"high_resolution", "target", "gt", "sharp", "sequences"}
 
 
 def subset_member(name: str, keys: set[str]) -> bool:

@@ -475,3 +475,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - The Vimeo fetch now also takes the official clean test archive when the super-resolution zip has no ground-truth tree. Extraction is finished only when every subset clip has both trees.
 - Why: Y-channel scores need the official high-resolution frames as well as the low-resolution ones.
 - Files: `scripts/fetch_vimeo_sr_test.py`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Ground-truth frames stored under `sequences/` count as the high-resolution tree.
+- Why: the official clean test archive uses that folder name, and otherwise the 30 clips would never look complete.
+- Files: `src/part1/vimeo.py`, `scripts/fetch_vimeo_sr_test.py`, `tests/test_part1.py`, `docs/workload/log.md`.

@@ -344,6 +344,12 @@ def test_vimeo_clips_need_both_low_and_high_trees():
         high.mkdir(parents=True)
         (high / "im1.png").write_bytes(b"x")
         assert module.clips_ready(root, keys) is True
+        (high / "im1.png").unlink()
+        high.rmdir()
+        sequences = root / "sequences" / "00071" / "0454"
+        sequences.mkdir(parents=True)
+        (sequences / "im1.png").write_bytes(b"x")
+        assert module.clips_ready(root, keys) is True
 
 
 def test_vimeo_pair_finds_low_and_high_trees():

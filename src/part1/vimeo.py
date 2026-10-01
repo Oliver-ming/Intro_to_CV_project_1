@@ -10,7 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 
 _LOW = {"low_resolution", "low", "lr", "bicubic"}
-_HIGH = {"high_resolution", "target", "gt", "sharp"}
+_HIGH = {"high_resolution", "target", "gt", "sharp", "sequences"}
 
 
 def pair_clip(root: Path, key: str) -> tuple[Path, Path | None]:
