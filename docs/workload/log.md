@@ -494,3 +494,15 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Pyramid Flow is sampled from the middle index of its own last-stage schedule after the bicubic clip is encoded. The released generate() path is not used.
 - Why: the course directions ask for a texture-aware blend and a flow-matching sample that starts from the low-resolution video, and neither is an official interface.
 - Files: `src/part3/detectors.py`, `src/part3/hybrid.py`, `scripts/run_hybrid.py`, `scripts/run_pyramid_midpoint.py`, `scripts/reds_means.py`, `scripts/pool_reds_fid.py`, `paper/main.tex`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Pyramid Flow imports without IPython. tensorboardX is installed because Accelerate checks that package for real.
+- Why: the midpoint sampler died at import after the weights finished downloading.
+- Files: `scripts/run_pyramid_midpoint.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Recorded the texture hybrid on REDS4: PSNR 25.07, SSIM 0.7819, LPIPS 0.2344, tLPIPS 0.1023. The pooled FID cell is still empty.
+- Why: the four clips are blended, and the table should show those scores while the 210-frame-style pooled distance for this row is still missing.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/results/reds4_means.json`, `docs/workload/log.md`.
