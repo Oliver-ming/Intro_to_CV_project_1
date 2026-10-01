@@ -415,3 +415,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Filled the REDS4 table from the finished scores. Replacing a row no longer eats the trailing LaTeX backslashes, which had stopped the update after EDVR-L.
 - Why: every completed method now has a 400-frame PSNR, and the report still described those runs as waiting.
 - Files: `scripts/reds_means.py`, `tests/test_part1.py`, `paper/main.tex`, `paper/main.pdf`, `docs/results/reds4_means.json`, `docs/results/reds4_pooled_fid.json`, `docs/results/reds4_metrics.json`, `docs/results/star_inference.json`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- The README now points at the filled REDS4 table. The official Vimeo test zip still returns HTTP 403.
+- Why: the instructions still said the numeric table was empty, and the 30-clip subset cannot be scored without that archive.
+- Files: `README.md`, `docs/workload/log.md`.

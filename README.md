@@ -14,7 +14,7 @@ Use `../env_cv`. From this directory:
 
 Official REDS archives go in `data/zips/` and are not committed. See `docs/manifests/downloads.md`. After `train_sharp.zip` and `train_sharp_bicubic.zip` finish, REDS4 clips `000`, `011`, `015`, and `020` are extracted under `data/reds/`. Resume a dropped ground-truth download with `../env_cv/bin/python scripts/fetch_train_sharp.py`. It keeps using the stable Hugging Face URL.
 
-The MIT Vimeo test packages return HTTP 403 from this machine, so the 30-clip subset is not available yet.
+REDS4 ground truth is extracted. The MIT Vimeo test packages still return HTTP 403, so the 30-clip subset is not scored.
 
 ## Run Part 1
 
@@ -22,7 +22,7 @@ The MIT Vimeo test packages return HTTP 403 from this machine, so the 30-clip su
 ../env_cv/bin/python scripts/run_part1.py
 ```
 
-Restored videos and `metrics.json` are written to `outputs/part1/`. REDS4 PSNR and SSIM are on RGB with no border crop. Frames are quantized to 8-bit before scoring. tLPIPS is not multiplied by 100. FID is the small-sample Fréchet distance on that clip, and the json records the frame count. If `train_sharp` is not extracted yet, the script still writes the videos and leaves metrics for later.
+Restored videos and `metrics.json` are written to `outputs/part1/`. REDS4 PSNR and SSIM are on RGB with no border crop. Frames are quantized to 8-bit before scoring. tLPIPS is not multiplied by 100. Each clip json stores a Fréchet distance and the frame count. The report table uses one Fréchet distance on all 400 frames, written by `scripts/pool_reds_fid.py`.
 
 ## EDVR
 
@@ -67,7 +67,7 @@ This needs the complete `weights/star_light_deg.pt` (8165233536 bytes) and `ffmp
 
 ## Report
 
-The CVPR draft is `paper/main.tex`. Numeric tables stay empty until the ground-truth frames are on disk. `cvpr.sty` and `ieeenat_fullname.bst` are linked into `paper/` from the author kit. From `paper/`:
+The CVPR report is `paper/main.tex` and `paper/main.pdf`. The REDS4 table is filled from `docs/results/reds4_means.json`. `cvpr.sty` and `ieeenat_fullname.bst` are linked into `paper/` from the author kit. From `paper/`:
 
 ```bash
 tectonic main.tex
