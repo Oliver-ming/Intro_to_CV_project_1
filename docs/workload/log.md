@@ -409,3 +409,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Cached certain masks for all four REDS4 clips. Clip 020 marks 293036 pixels on 34 of 100 frames.
 - Why: the hybrid can load these masks when official STAR finishes, and the prior is much denser on clip 020 than on clip 000.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Filled the REDS4 table from the finished scores. Replacing a row no longer eats the trailing LaTeX backslashes, which had stopped the update after EDVR-L.
+- Why: every completed method now has a 400-frame PSNR, and the report still described those runs as waiting.
+- Files: `scripts/reds_means.py`, `tests/test_part1.py`, `paper/main.tex`, `paper/main.pdf`, `docs/results/reds4_means.json`, `docs/results/reds4_pooled_fid.json`, `docs/results/reds4_metrics.json`, `docs/results/star_inference.json`, `docs/workload/log.md`.

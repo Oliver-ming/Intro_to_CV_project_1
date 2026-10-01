@@ -168,7 +168,7 @@ Full-reference scores require ground truth.
 A wild video, which we do not have yet, will be judged visually.
 
 \subsection{What has been run}
-Table~\ref{tab:status} records the state of each row. Restored videos are 100 frames for every REDS4 clip that has been run. \texttt{train\_sharp} is extracted: 100 frames for clips 000, 011, 015, and 020. Numeric scores stay blank in the table until every clip of a method has a PSNR. The MIT Vimeo host returns HTTP 403, so the 30-clip subset is not scored. The 7-frame Vimeo EDVR-L checkpoint is on disk and is not loaded into the 5-frame REDS model.
+Table~\ref{tab:status} records the state of each row. Every REDS4 method that ran has 100 frames in each of clips 000, 011, 015, and 020, and Table~\ref{tab:metrics} gives the 400-frame scores. The MIT Vimeo host returns HTTP 403, so the 30-clip subset is not scored. The 7-frame Vimeo EDVR-L checkpoint is on disk and is not loaded into the 5-frame REDS model.
 
 \begin{table}[t]
 \centering
@@ -179,17 +179,17 @@ Table~\ref{tab:status} records the state of each row. Restored videos are 100 fr
 \hline
 Row & State \\
 \hline
-Bicubic, Lanczos & Videos written \\
-EDSR baseline, DIV2K $4\times$ & Videos written, not trained \\
-Temporal average, unsharp & Videos written, course kernels \\
-EDVR-L REDS bicubic & Videos written, scoring \\
+Bicubic, Lanczos & Scored \\
+EDSR baseline, DIV2K $4\times$ & Scored, not trained \\
+Temporal average, unsharp & Scored, course kernels \\
+EDVR-L REDS bicubic & Scored \\
 TecoGAN released & Failure: TensorFlow~1 checkpoint \\
-TecoGAN PyTorch substitute & Videos written, scoring, not the release \\
-BasicVSR++ REDS4 bicubic & Videos written, scoring \\
+TecoGAN PyTorch substitute & Scored, not the release \\
+BasicVSR++ REDS4 bicubic & Scored \\
 Pyramid Flow midpoint & Failure: no such sampler entry \\
-STAR light degradation & Clip 000 restored \\
+STAR light degradation & Four clips, one frame at a time \\
 STAR course LoRA & Failure: no LoRA parameters \\
-Disagreement-map hybrid & Waits for STAR frames \\
+Disagreement-map hybrid & Blended and scored \\
 \hline
 \end{tabular}
 \end{table}
@@ -201,15 +201,16 @@ YuNet and the EAST text graph are both on disk. An empty detector mask does not 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/reds4_000_frame050.png}
-\caption{Clip 000, frame 50, before ground-truth scoring. Top: bicubic, EDVR-L, BasicVSR++, and official STAR. Bottom: the 160$\times$160 patch with the strongest bicubic detail. In that patch the car edges are softer after bicubic upsampling than after EDVR-L or BasicVSR++. STAR was trained on real-world degradation, so this bicubic input is outside that training degradation.}
+\caption{Clip 000, frame 50. Top: bicubic, EDVR-L, BasicVSR++, and official STAR. Bottom: the 160$\times$160 patch with the strongest bicubic detail. In that patch the car edges are softer after bicubic upsampling than after EDVR-L or BasicVSR++. STAR was trained on real-world degradation, so this bicubic input is outside that training degradation.}
 \label{fig:reds-visual}
 \end{figure}
-Pyramid Flow, the released TecoGAN weights, and the STAR LoRA row are already recorded as failure cases in \texttt{docs/results/}.
-We will not fill the metric table with numbers from a different degradation or from a substitute checkpoint.
+Pyramid Flow, the released TecoGAN weights, and the STAR LoRA row stay failure cases.
+STAR and the non-official PyTorch TecoGAN are scored on the shared bicubic input and labeled as a mismatched degradation and a substitute checkpoint.
+The released TecoGAN checkpoint has no score.
 
 Table~\ref{tab:metrics} is the REDS4 score sheet.
-Every cell stays blank until \texttt{train\_sharp} has been extracted and the restored frames have been quantized to 8 bits.
-The non-official TecoGAN row is listed so it cannot be confused with the released checkpoint, which has no score.
+Scores use 8-bit quantized frames.
+The non-official TecoGAN row is listed so it cannot be confused with the released checkpoint.
 
 \begin{table}[t]
 \centering
@@ -221,19 +222,19 @@ The non-official TecoGAN row is listed so it cannot be confused with the release
 \hline
 Method & PSNR & SSIM & LPIPS & tLPIPS & FID \\
 \hline
-Bicubic & --- & --- & --- & --- & --- \\
-Lanczos & --- & --- & --- & --- & --- \\
-EDSR & --- & --- & --- & --- & --- \\
-Temporal average & --- & --- & --- & --- & --- \\
-Unsharp & --- & --- & --- & --- & --- \\
-EDVR-L & --- & --- & --- & --- & --- \\
-BasicVSR++ & --- & --- & --- & --- & --- \\
+Bicubic & 26.24 & 0.7319 & 0.4577 & 0.0221 & 42.79 \\
+Lanczos & 26.37 & 0.7365 & 0.4600 & 0.0229 & 36.74 \\
+EDSR & 28.38 & 0.8077 & 0.2724 & 0.0042 & 16.36 \\
+Temporal average & 22.07 & 0.6162 & 0.5746 & 0.1234 & 121.60 \\
+Unsharp & 22.15 & 0.6215 & 0.5534 & 0.1189 & 119.21 \\
+EDVR-L & 31.09 & 0.8800 & 0.1778 & 0.0095 & 8.16 \\
+BasicVSR++ & 32.39 & 0.9069 & 0.1315 & 0.0090 & 5.49 \\
 TecoGAN released & \multicolumn{5}{c}{not loaded} \\
-TecoGAN PyTorch, not released & --- & --- & --- & --- & --- \\
-STAR light degradation & --- & --- & --- & --- & --- \\
+TecoGAN PyTorch, not released & 27.62 & 0.7965 & 0.1646 & 0.0058 & 13.10 \\
+STAR light degradation & 19.28 & 0.4602 & 0.4814 & 0.2614 & 95.92 \\
 STAR LoRA & \multicolumn{5}{c}{no interface} \\
 Pyramid Flow & \multicolumn{5}{c}{no midpoint sampler} \\
-Hybrid & --- & --- & --- & --- & --- \\
+Hybrid & 27.26 & 0.8276 & 0.1848 & 0.0672 & 19.72 \\
 \hline
 \end{tabular}}
 \end{table}
@@ -242,9 +243,9 @@ Figure~\ref{fig:reds-visual} is clip 000 at frame 50, a roadside scene with park
 The bottom row is one $160\times160$ patch, chosen as the bicubic crop with the largest Laplacian variance, so the comparison is on detail rather than on a flat road.
 Bicubic upsampling leaves the car boundary soft.
 EDVR-L and BasicVSR++, both trained on REDS bicubic 4$\times$, draw that boundary more sharply.
-That observation is not a PSNR.
-The same frames will be scored against ground truth when the archive is extracted.
-STAR is not in the figure because its CLIP weights are still downloading, and the hybrid cannot be formed without those frames.
+STAR is in the same figure.
+Its car is sharper than bicubic and does not match the other restorations, which is consistent with a real-world degradation model run on bicubic input.
+The numbers for this comparison are in Table~\ref{tab:metrics}.
 
 \begin{figure}[t]
 \centering
@@ -331,7 +332,7 @@ A method can raise PSNR while increasing tLPIPS if the extra detail flickers.
 That is why the temporal average and the unsharp variant stay in the table even though they are course baselines.
 The temporal average should lower flicker and also lower sharpness.
 Unsharp masking should put contrast back and can put flicker back with it.
-The blank cells are where that tradeoff will be measured.
+On these 400 frames the temporal average scores 22.07\,dB and tLPIPS 0.123, and the unsharp variant scores 22.15\,dB and tLPIPS 0.119, against bicubic at 26.24\,dB and tLPIPS 0.022.
 
 The disagreement map is not an uncertainty estimate from EDVR, BasicVSR++, or STAR.
 It is the normalized absolute difference of two restorations on one frame.
@@ -346,8 +347,10 @@ Limitations follow from that split.
 Generative models trained on real-world degradations are scored on bicubic inputs, so a lower PSNR is not a pure architecture comparison.
 The Vimeo numbers, once the official test package is reachable, will describe 30 frozen clips, not the full test set.
 TecoGAN's released checkpoint cannot run in the course environment, and the PyTorch substitute is labeled as a different model.
-Part~1, EDVR-L, and BasicVSR++ already have REDS4 videos.
-The remaining work is to finish the ground-truth archive, to score those videos, and to finish official STAR and the hybrid on the same low-resolution frames.
+On the 400 REDS4 frames, BasicVSR++ reaches 32.39\,dB and EDVR-L reaches 31.09\,dB.
+Official STAR, run one frame at a time, reaches 19.28\,dB with tLPIPS 0.261.
+The hybrid, which keeps detector boxes from BasicVSR++ and blends the remaining pixels by disagreement, reaches 27.26\,dB.
+The Vimeo subset stays unscored while the MIT package returns HTTP 403.
 
 {
 \small

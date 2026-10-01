@@ -96,10 +96,14 @@ def fill_table(text: str, means: dict[str, dict | None]) -> str:
             f"{label} & {scores['psnr_rgb']:.2f} & {scores['ssim_rgb']:.4f} "
             f"& {scores['lpips']:.4f} & {scores['tlpips']:.4f} & {fid_cell} \\\\"
         )
-        pattern = re.compile(rf"^{re.escape(label)} & .*\\\\$", re.MULTILINE)
+        pattern = re.compile(
+            rf"^{re.escape(label)} & (?:---|\d+(?:\.\d+)?) & (?:---|\d+(?:\.\d+)?) "
+            rf"& (?:---|\d+(?:\.\d+)?) & (?:---|\d+(?:\.\d+)?) & (?:---|\d+(?:\.\d+)?) \\+$",
+            re.MULTILINE,
+        )
         if pattern.search(text) is None:
             raise SystemExit(f"report table has no row for {label}")
-        text = pattern.sub(row, text, count=1)
+        text = pattern.sub(lambda _match: row, text, count=1)
     return text
 
 

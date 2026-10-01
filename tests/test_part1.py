@@ -261,6 +261,8 @@ def test_fill_table_replaces_only_a_scored_row():
     without_fid = {"Bicubic": {key: value for key, value in means["Bicubic"].items() if key != "pooled_fid"}, "Lanczos": None}
     blank_fid = module.fill_table(text, without_fid)
     assert blank_fid.startswith("Bicubic & 28.10 & 0.8100 & 0.2000 & 0.0100 & ---")
+    again = module.fill_table(filled, means)
+    assert again.startswith("Bicubic & 28.10 & 0.8100 & 0.2000 & 0.0100 & 12.00 \\\\")
 
 
 def test_reds_archive_is_not_ready_while_aria2_control_exists():

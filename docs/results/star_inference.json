@@ -1,0 +1,23 @@
+{
+  "checkpoint": "I2VGen-XL-based/light_deg.pt",
+  "training_degradation": "real-world light degradation, not bicubic",
+  "lora": "not run; no LoRA interface in train_sr.py",
+  "clips": {
+    "000": {
+      "frames": 100,
+      "max_chunk_len": 1
+    },
+    "011": {
+      "frames": 100,
+      "max_chunk_len": 1
+    },
+    "015": {
+      "frames": 100,
+      "max_chunk_len": 1
+    },
+    "020": {
+      "frames": 100,
+      "max_chunk_len": 1
+    }
+  }
+}
