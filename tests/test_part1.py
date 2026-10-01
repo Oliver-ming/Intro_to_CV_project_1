@@ -158,6 +158,54 @@ def test_blank_frame_has_no_face_prior_when_yunet_is_present():
     assert Path(YUNET).name.startswith("face_detection_yunet")
 
 
+def test_pyramid_midpoint_is_read_from_the_step_count():
+    import importlib.util
+
+    import torch
+
+    spec = importlib.util.spec_from_file_location(
+        "run_pyramid_midpoint",
+        Path(__file__).resolve().parents[1] / "scripts" / "run_pyramid_midpoint.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.midpoint_index(20) == 10
+    clean = torch.zeros(1, 1, 1, 2, 2)
+    noise = torch.ones(1, 1, 1, 2, 2)
+    mixed = module.flow_mix(clean, noise, torch.tensor(0.5))
+    assert torch.allclose(mixed, torch.full_like(clean, 0.5))
+
+
+def test_texture_mask_marks_green_grass_and_blue_water():
+    from part3.detectors import texture_mask
+
+    grass = np.zeros((4, 4, 3), dtype=np.float32)
+    grass[..., 1] = 140
+    grass[..., 0] = 40
+    grass[..., 2] = 40
+    water = np.zeros((4, 4, 3), dtype=np.float32)
+    water[..., 2] = 150
+    water[..., 0] = 40
+    water[..., 1] = 80
+    gray = np.full((4, 4, 3), 90, dtype=np.float32)
+    assert texture_mask(grass).all()
+    assert texture_mask(water).all()
+    assert not texture_mask(gray).any()
+
+
+def test_face_and_text_override_grass_and_water():
+    from part3.hybrid import blend
+
+    fidelity = np.zeros((2, 2, 3), dtype=np.float32)
+    generative = np.full((2, 2, 3), 50, dtype=np.float32)
+    certain = np.zeros((2, 2), dtype=bool)
+    certain[0, 0] = True
+    texture = np.ones((2, 2), dtype=bool)
+    mixed = blend(fidelity, generative, certain, texture)
+    assert np.allclose(mixed[0, 0], 0)
+    assert np.allclose(mixed[0, 1], 50)
+
+
 def test_disagreement_map_sends_certain_pixels_to_fidelity():
     from part3.hybrid import blend
 

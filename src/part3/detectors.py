@@ -17,6 +17,23 @@ YUNET = ROOT / "weights" / "face_detection_yunet_2023mar.onnx"
 EAST = ROOT / "weights" / "frozen_east_text_detection.pb"
 
 
+def texture_mask(frame: np.ndarray) -> np.ndarray:
+    """Course grass and water prior on one RGB frame.
+
+    Grass is a pixel whose green channel leads both red and blue.
+    Water is a pixel whose blue channel leads red and is at least as strong as green.
+    This is not a semantic segmenter.
+    """
+
+    image = np.clip(np.rint(frame), 0, 255).astype(np.int16)
+    red = image[..., 0]
+    green = image[..., 1]
+    blue = image[..., 2]
+    grass = (green > red + 12) & (green > blue + 8) & (green > 40)
+    water = (blue > red + 12) & (blue + 8 >= green) & (blue > 40)
+    return grass | water
+
+
 def certain_mask(frame: np.ndarray) -> np.ndarray:
     image = np.clip(np.rint(frame), 0, 255).astype(np.uint8)
     height, width = image.shape[:2]

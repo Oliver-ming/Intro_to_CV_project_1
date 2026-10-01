@@ -190,6 +190,7 @@ Pyramid Flow midpoint & Failure: no such sampler entry \\
 STAR light degradation & Four clips, one frame at a time \\
 STAR course LoRA & Failure: no LoRA parameters \\
 Disagreement-map hybrid & Blended and scored \\
+Texture hybrid & Grass and water use STAR \\
 \hline
 \end{tabular}
 \end{table}
@@ -235,6 +236,7 @@ STAR light degradation & 19.28 & 0.4602 & 0.4814 & 0.2614 & 95.92 \\
 STAR LoRA & \multicolumn{5}{c}{no interface} \\
 Pyramid Flow & \multicolumn{5}{c}{no midpoint sampler} \\
 Hybrid & 27.26 & 0.8276 & 0.1848 & 0.0672 & 19.72 \\
+Texture hybrid & --- & --- & --- & --- & --- \\
 \hline
 \end{tabular}}
 \end{table}
@@ -297,6 +299,10 @@ The hybrid detects faces with YuNet and text with EAST on the bicubic-upscaled l
 Boxes are not dilated.
 Pixels inside a box are copied from BasicVSR++.
 Pixels outside a box use the disagreement map.
+A second blend keeps that rule and, outside those boxes, copies grass and water pixels from official STAR.
+Grass is a pixel whose green channel leads red and blue.
+Water is a pixel whose blue channel leads red and is at least as strong as green.
+That color rule is a course texture prior, not a semantic segmenter.
 If a detector returns no boxes, the blend still runs.
 On clip 000 the two detectors together mark 8640 pixels, and only 3 of the 100 frames contain any box.
 On clip 011 they mark 124291 pixels across 11 frames.

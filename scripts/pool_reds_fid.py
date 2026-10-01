@@ -31,6 +31,7 @@ PNG_METHODS = {
     "TecoGAN PyTorch, not released": ROOT / "outputs" / "part2" / "tecogan_not_official" / "frames",
     "STAR light degradation": ROOT / "outputs" / "part3" / "star" / "frames",
     "Hybrid": ROOT / "outputs" / "part3" / "hybrid" / "frames",
+    "Texture hybrid": ROOT / "outputs" / "part3" / "hybrid_texture" / "frames",
 }
 RESULT = ROOT / "docs" / "results" / "reds4_pooled_fid.json"
 TRUTH = ROOT / "data" / "reds" / "train" / "train_sharp"

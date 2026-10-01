@@ -487,3 +487,10 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - The README now names both official Vimeo archives and says scoring waits for a low-resolution tree and a ground-truth tree.
 - Why: the fetch no longer treats a low-resolution-only extract as finished.
 - Files: `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Grass and water pixels, defined by a course color rule, are copied from official STAR. Face and text boxes still come from BasicVSR++.
+- Pyramid Flow is sampled from the middle index of its own last-stage schedule after the bicubic clip is encoded. The released generate() path is not used.
+- Why: the course directions ask for a texture-aware blend and a flow-matching sample that starts from the low-resolution video, and neither is an official interface.
+- Files: `src/part3/detectors.py`, `src/part3/hybrid.py`, `scripts/run_hybrid.py`, `scripts/run_pyramid_midpoint.py`, `scripts/reds_means.py`, `scripts/pool_reds_fid.py`, `paper/main.tex`, `tests/test_part1.py`, `docs/workload/log.md`.

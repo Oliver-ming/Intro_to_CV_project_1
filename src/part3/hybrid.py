@@ -22,9 +22,15 @@ def disagreement_map(fidelity: np.ndarray, generative: np.ndarray) -> np.ndarray
     return ((difference - low) / (high - low)).astype(np.float32)
 
 
-def blend(fidelity: np.ndarray, generative: np.ndarray, certain: np.ndarray) -> np.ndarray:
+def blend(
+    fidelity: np.ndarray,
+    generative: np.ndarray,
+    certain: np.ndarray,
+    texture: np.ndarray | None = None,
+) -> np.ndarray:
     weight = disagreement_map(fidelity, generative)
-    certain_mask = certain.astype(bool)
-    weight = np.where(certain_mask, 0.0, weight).astype(np.float32)
+    if texture is not None:
+        weight = np.where(texture.astype(bool), 1.0, weight)
+    weight = np.where(certain.astype(bool), 0.0, weight).astype(np.float32)
     mixed = (1.0 - weight[..., None]) * fidelity + weight[..., None] * generative
     return mixed.astype(np.float32)

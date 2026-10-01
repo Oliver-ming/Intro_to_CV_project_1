@@ -26,6 +26,7 @@ SOURCES = {
     "basicvsrpp": ROOT / "outputs" / "part3" / "basicvsrpp" / "metrics.json",
     "star": ROOT / "outputs" / "part3" / "star" / "metrics.json",
     "hybrid": ROOT / "outputs" / "part3" / "hybrid" / "metrics.json",
+    "hybrid_texture": ROOT / "outputs" / "part3" / "hybrid_texture" / "metrics.json",
 }
 ROWS = (
     ("Bicubic", "part1", "bicubic"),
@@ -38,6 +39,7 @@ ROWS = (
     ("TecoGAN PyTorch, not released", "tecogan_not_official", None),
     ("STAR light degradation", "star", None),
     ("Hybrid", "hybrid", None),
+    ("Texture hybrid", "hybrid_texture", None),
 )
 PAPER = ROOT / "paper" / "main.tex"
 MEANS = ROOT / "docs" / "results" / "reds4_means.json"

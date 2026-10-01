@@ -22,7 +22,7 @@ from part1.io import read_sequence, write_sequence, write_video
 from part1.perceptual import AlexLPIPS
 from part1.resample import upsample
 from part1.score import score_reds
-from part3.detectors import EAST, YUNET, certain_mask
+from part3.detectors import EAST, YUNET, certain_mask, texture_mask
 from part3.hybrid import blend
 
 CLIPS = ("000", "011", "015", "020")
@@ -40,16 +40,17 @@ def _certain(output_root: Path, clip: str, guide: np.ndarray) -> np.ndarray:
     return masks
 
 
-def main() -> None:
+def main(use_texture: bool = False) -> None:
     fidelity_root = ROOT / "outputs" / "part3" / "basicvsrpp" / "frames"
     generative_root = ROOT / "outputs" / "part3" / "star" / "frames"
     if not fidelity_root.is_dir() or not generative_root.is_dir():
         raise SystemExit("hybrid needs BasicVSR++ frames and official STAR frames")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    output_root = ROOT / "outputs" / "part3" / "hybrid"
+    output_root = ROOT / "outputs" / "part3" / ("hybrid_texture" if use_texture else "hybrid")
     summary = {
         "fidelity": "BasicVSR++ REDS4 bicubic",
         "generative": "official STAR light_deg.pt",
+        "texture": "grass and water color prior" if use_texture else "none",
         "yunet": YUNET.is_file(),
         "east": EAST.is_file(),
         "clips": {},
@@ -62,6 +63,7 @@ def main() -> None:
         low = read_sequence(sorted((ROOT / "data" / "reds" / "train" / "train_sharp_bicubic" / "X4" / clip).glob("*.png")))
         guide = np.stack([upsample(frame, 4, "bicubic") for frame in low])
         masks = _certain(output_root, clip, guide)
+        texture = np.stack([texture_mask(frame) for frame in guide]) if use_texture else None
         count = min(len(fidelity), len(generative), len(guide), len(masks))
         if fidelity.shape[1:] != generative.shape[1:] or fidelity.shape[1:] != guide.shape[1:]:
             summary["clips"][clip] = {
@@ -72,7 +74,17 @@ def main() -> None:
             }
             print(clip, "shape mismatch", flush=True)
             continue
-        mixed = np.stack([blend(fidelity[index], generative[index], masks[index]) for index in range(count)])
+        mixed = np.stack(
+            [
+                blend(
+                    fidelity[index],
+                    generative[index],
+                    masks[index],
+                    None if texture is None else texture[index],
+                )
+                for index in range(count)
+            ]
+        )
         write_sequence(output_root / "frames" / clip, mixed)
         write_video(output_root / f"{clip}.mp4", mixed)
         truth_dir = ROOT / "data" / "reds" / "train" / "train_sharp" / clip
@@ -95,4 +107,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--texture", action="store_true")
+    main(parser.parse_args().texture)
