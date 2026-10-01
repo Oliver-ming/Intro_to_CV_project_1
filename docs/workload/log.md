@@ -481,3 +481,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Ground-truth frames stored under `sequences/` count as the high-resolution tree.
 - Why: the official clean test archive uses that folder name, and otherwise the 30 clips would never look complete.
 - Files: `src/part1/vimeo.py`, `scripts/fetch_vimeo_sr_test.py`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- The README now names both official Vimeo archives and says scoring waits for a low-resolution tree and a ground-truth tree.
+- Why: the fetch no longer treats a low-resolution-only extract as finished.
+- Files: `README.md`, `docs/workload/log.md`.
