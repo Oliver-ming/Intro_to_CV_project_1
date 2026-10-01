@@ -1,0 +1,10 @@
+{
+  "archive": "http://data.csail.mit.edu/tofu/testset/vimeo_super_resolution_test.zip",
+  "ground_truth_archive": "http://data.csail.mit.edu/tofu/testset/vimeo_test_clean.zip",
+  "http_status": 403,
+  "subset": "docs/manifests/vimeo-subset.txt",
+  "clips": 30,
+  "checkpoint": "weights/EDVR_L_x4_SR_Vimeo90K_official-162b54e4.pth",
+  "entered_metric_table": false,
+  "reason": "The MIT host redirects to HTTPS and returns HTTP 403. The official TOFlow page links only to that host. No restored Vimeo videos or Y-channel scores are reported."
+}

@@ -28,7 +28,7 @@ Part~1 compares bicubic and Lanczos upsampling, a frame-wise EDSR baseline, and 
 Part~2 runs EDVR and records the released TecoGAN checkpoint as a TensorFlow model that this Python environment cannot load.
 Part~3 treats Pyramid Flow as a conditioned generator only when the sampler can start from a noisy bicubic upsample, runs STAR from its released weights, and blends BasicVSR++ with STAR through a disagreement map.
 REDS4 is scored on RGB with no border crop.
-A 30-clip Vimeo subset, frozen from the official test list, is scored on the Y channel.
+A 30-clip Vimeo subset is frozen from the official test list. It is not scored, because the official test archive returns HTTP 403.
 The public repository link will be added here when the remote exists.
 \end{abstract}
 

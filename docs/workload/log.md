@@ -421,3 +421,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - The README now points at the filled REDS4 table. The official Vimeo test zip still returns HTTP 403.
 - Why: the instructions still said the numeric table was empty, and the 30-clip subset cannot be scored without that archive.
 - Files: `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Recorded that the official Vimeo test archive returns HTTP 403, and corrected the abstract so it no longer says that subset was scored.
+- Why: the 30-clip Y-channel table cannot be filled without the official low-resolution frames.
+- Files: `docs/results/vimeo_official_archive.json`, `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
