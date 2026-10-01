@@ -451,3 +451,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Vimeo FID is one distance on all restored frames of the 30 clips. Part 1 now saves those frames, and a missing clip leaves that FID cell blank.
 - Why: averaging seven-frame distances would not match the pooled FID used for REDS4.
 - Files: `scripts/pool_vimeo_fid.py`, `scripts/run_part1_vimeo.py`, `scripts/run_edvr_vimeo.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Recompile the report when the Vimeo table actually gains a score.
+- Why: writing the tex without a PDF would leave the 6-page report behind the numbers.
+- Files: `scripts/vimeo_means.py`, `docs/workload/log.md`.

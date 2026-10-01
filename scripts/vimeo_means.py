@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -82,10 +84,23 @@ def main() -> None:
     means = collect()
     MEANS.parent.mkdir(parents=True, exist_ok=True)
     MEANS.write_text(json.dumps(means, indent=2) + "\n")
-    if PAPER.is_file():
-        PAPER.write_text(fill_table(PAPER.read_text(), means))
     filled = [label for label, scores in means.items() if scores]
+    if PAPER.is_file():
+        original = PAPER.read_text()
+        updated = fill_table(original, means)
+        if updated != original:
+            PAPER.write_text(updated)
+            if filled:
+                _recompile()
     print("vimeo filled", ", ".join(filled) if filled else "none", flush=True)
+
+
+def _recompile() -> None:
+    binary = shutil.which("tectonic") or "/tmp/tectonic-musl/tectonic"
+    if not Path(binary).is_file():
+        print("tectonic is not available; the Vimeo table tex was updated", flush=True)
+        return
+    subprocess.call([binary, "main.tex"], cwd=ROOT / "paper")
 
 
 if __name__ == "__main__":
