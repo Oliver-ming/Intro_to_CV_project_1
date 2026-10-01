@@ -457,3 +457,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Recompile the report when the Vimeo table actually gains a score.
 - Why: writing the tex without a PDF would leave the 6-page report behind the numbers.
 - Files: `scripts/vimeo_means.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- The report now says the Vimeo table is already labeled as the 30-clip, 210-frame subset, and names the Part 1 and fetch scripts.
+- Why: the table exists with blank cells, so the text should not say it will be created later.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.

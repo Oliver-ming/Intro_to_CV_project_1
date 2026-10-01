@@ -325,7 +325,9 @@ It is not the released TecoGAN checkpoint.
 The code, the frozen Vimeo list, and this draft live in one git repository.
 Part~1 is \texttt{scripts/run\_part1.py}.
 EDVR-L on REDS4 is \texttt{scripts/run\_edvr.py} with the 5-frame bicubic checkpoint.
-The Vimeo row is \texttt{scripts/run\_edvr\_vimeo.py} with the 7-frame checkpoint, and it refuses to run without the official frames.
+The Vimeo rows are \texttt{scripts/run\_part1\_vimeo.py} and \texttt{scripts/run\_edvr\_vimeo.py}.
+Both refuse to run without the official frames.
+\texttt{scripts/fetch\_vimeo\_sr\_test.py} extracts the frozen 30 clips only after that zip is complete.
 BasicVSR++ is \texttt{scripts/run\_basicvsrpp.py}.
 The non-official TecoGAN generator is \texttt{scripts/run\_tecogan\_not\_official.py}.
 Official STAR is \texttt{scripts/run\_star\_official.py}, and the hybrid is \texttt{scripts/run\_hybrid.py}.
@@ -343,8 +345,9 @@ They are not used to synthesize a new benchmark.
 REDS4 is four training clips held out of the fit, not the official REDS validation split.
 The validation split is a different set of clips.
 Reporting REDS4 as ``REDS val'' would name the wrong videos.
-The Vimeo table, when the official package can be downloaded, will say ``Vimeo subset (30)'' and will list 210 frames.
-It will not be labeled as the full Vimeo-90K test set of 7824 septuplets.
+Table~\ref{tab:vimeo} is already labeled ``Vimeo subset (30)'' and states 210 frames.
+It is not the full Vimeo-90K test set of 7824 septuplets.
+Its numeric cells stay blank until the official archive can be downloaded.
 
 tLPIPS is the absolute gap between two LPIPS values: the restored pair and the ground-truth pair.
 It is not the LPIPS of a frame-difference image.
