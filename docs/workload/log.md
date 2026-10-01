@@ -433,3 +433,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - The discussion now follows the measured temporal-average scores: PSNR falls and tLPIPS rises relative to bicubic.
 - Why: the previous sentence said the average should lower flicker, which contradicts tLPIPS 0.123 against bicubic 0.022.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added a downloader that extracts the frozen 30 Vimeo clips only after the official zip is a complete archive. An HTTP 403 leaves the frames untouched.
+- Why: the subset cannot be scored until `vimeo_super_resolution_test.zip` is actually downloaded.
+- Files: `scripts/fetch_vimeo_sr_test.py`, `tests/test_part1.py`, `README.md`, `docs/workload/log.md`.

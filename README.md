@@ -14,7 +14,7 @@ Use `../env_cv`. From this directory:
 
 Official REDS archives go in `data/zips/` and are not committed. See `docs/manifests/downloads.md`. After `train_sharp.zip` and `train_sharp_bicubic.zip` finish, REDS4 clips `000`, `011`, `015`, and `020` are extracted under `data/reds/`. Resume a dropped ground-truth download with `../env_cv/bin/python scripts/fetch_train_sharp.py`. It keeps using the stable Hugging Face URL.
 
-REDS4 ground truth is extracted. The MIT Vimeo test packages still return HTTP 403, so the 30-clip subset is not scored.
+REDS4 ground truth is extracted. The MIT Vimeo test packages still return HTTP 403, so the 30-clip subset is not scored. `scripts/fetch_vimeo_sr_test.py` downloads `vimeo_super_resolution_test.zip` and extracts the frozen 30 clips only after the zip is complete.
 
 ## Run Part 1
 

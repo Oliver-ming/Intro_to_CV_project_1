@@ -288,6 +288,22 @@ def test_reds_archive_is_not_ready_while_aria2_control_exists():
         assert module.retry_pause(10, 10, True) is False
 
 
+def test_vimeo_archive_member_matches_only_a_subset_clip():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "fetch_vimeo_sr_test",
+        Path(__file__).resolve().parents[1] / "scripts" / "fetch_vimeo_sr_test.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    keys = {"00071/0454"}
+    assert module.subset_member("vimeo_super_resolution_test/low_resolution/00071/0454/im1.png", keys)
+    assert module.subset_member("target/00071/0454/im4.png", keys)
+    assert not module.subset_member("low_resolution/00071/0455/im1.png", keys)
+    assert not module.subset_member("low_resolution/00071/0454/readme.txt", keys)
+
+
 def test_vimeo_pair_finds_low_and_high_trees():
     import tempfile
     from part1.vimeo import pair_clip
