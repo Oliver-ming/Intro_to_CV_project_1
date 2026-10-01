@@ -27,6 +27,7 @@ SOURCES = {
     "star": ROOT / "outputs" / "part3" / "star" / "metrics.json",
     "hybrid": ROOT / "outputs" / "part3" / "hybrid" / "metrics.json",
     "hybrid_texture": ROOT / "outputs" / "part3" / "hybrid_texture" / "metrics.json",
+    "pyramid_midpoint": ROOT / "outputs" / "part3" / "pyramid_midpoint" / "metrics.json",
 }
 ROWS = (
     ("Bicubic", "part1", "bicubic"),
@@ -40,6 +41,7 @@ ROWS = (
     ("STAR light degradation", "star", None),
     ("Hybrid", "hybrid", None),
     ("Texture hybrid", "hybrid_texture", None),
+    ("Pyramid Flow", "pyramid_midpoint", None),
 )
 PAPER = ROOT / "paper" / "main.tex"
 MEANS = ROOT / "docs" / "results" / "reds4_means.json"

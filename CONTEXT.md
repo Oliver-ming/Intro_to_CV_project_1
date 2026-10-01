@@ -28,9 +28,13 @@ _Avoid_: wild video, sample footage
 The REDS benchmark in this project: clips 000, 011, 015, and 020, held out from the REDS training split.
 _Avoid_: REDS validation set, REDS test set
 
+**Vid4**:
+The extra benchmark in this project: calendar, city, foliage, and walk, with BasicSR's official BIx4 low-resolution frames and ground truth. It is the scored substitute for the Vimeo subset.
+_Avoid_: Vimeo-90K, REDS4, wild video
+
 **Vimeo subset**:
-The Vimeo-90K benchmark in this project: 30 seven-frame clips drawn once, without replacement, from the official test list and then frozen.
-_Avoid_: full Vimeo-90K, Vimeo-90K-T, Vimeo-LR
+Thirty seven-frame clips drawn once, without replacement, from the official Vimeo-90K test list and then frozen. The MIT archive returns HTTP 403, so this subset is not scored.
+_Avoid_: full Vimeo-90K, Vimeo-90K-T, Vid4
 
 **Ground-truth video**:
 The original high-resolution benchmark clip from which the low-resolution input is made.

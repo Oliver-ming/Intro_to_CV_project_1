@@ -40,6 +40,7 @@ TRUTH = ROOT / "data" / "reds" / "train" / "train_sharp"
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--part1", action="store_true")
+    parser.add_argument("--only", default="")
     args = parser.parse_args()
     if not any(TRUTH.glob("*/*.png")):
         raise SystemExit("REDS4 ground truth is not extracted")
@@ -49,6 +50,8 @@ def main() -> None:
     truth_features = inception(truth_frames)
     pooled = json.loads(RESULT.read_text()) if RESULT.is_file() else {}
     for label, directory in PNG_METHODS.items():
+        if args.only and label != args.only:
+            continue
         frames = _complete(directory)
         if frames is None:
             print(label, "incomplete", flush=True)

@@ -1,0 +1,43 @@
+{
+  "method": "course conditional sample from the sampler midpoint",
+  "official_video_sr_api": false,
+  "text_encoder": "cpu",
+  "classifier_free_guidance": "two sequential forwards",
+  "clips": {
+    "000": {
+      "psnr_rgb": 16.928472081595434,
+      "ssim_rgb": 0.3950869265583538,
+      "lpips": 0.7187137967348098,
+      "tlpips": 0.2948700814611382,
+      "frames": 100,
+      "fid": 184.06696812285804
+    },
+    "011": {
+      "psnr_rgb": 17.932795414675446,
+      "ssim_rgb": 0.45174992459287366,
+      "lpips": 0.7476870340108871,
+      "tlpips": 0.17252405032967078,
+      "frames": 100,
+      "fid": 225.17325849211636
+    },
+    "015": {
+      "psnr_rgb": 20.239217973175368,
+      "ssim_rgb": 0.5729450486923918,
+      "lpips": 0.6857213193178177,
+      "tlpips": 0.22298889050279,
+      "frames": 100,
+      "fid": 143.30870919313938
+    },
+    "020": {
+      "psnr_rgb": 16.641434585137752,
+      "ssim_rgb": 0.4290415572733855,
+      "lpips": 0.70869777739048,
+      "tlpips": 0.13588372640537494,
+      "frames": 100,
+      "fid": 215.3404517481083
+    }
+  },
+  "start_index": 10,
+  "num_steps": 20,
+  "pooled_fid": 165.9858842847601
+}

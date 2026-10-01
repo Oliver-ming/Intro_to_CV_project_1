@@ -506,3 +506,16 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Recorded the texture hybrid on REDS4: PSNR 25.07, SSIM 0.7819, LPIPS 0.2344, tLPIPS 0.1023. The pooled FID cell is still empty.
 - Why: the four clips are blended, and the table should show those scores while the 210-frame-style pooled distance for this row is still missing.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/results/reds4_means.json`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Replaced the unscored 30-clip Vimeo subset with Vid4. The archive is BasicSR's official BIx4 and GT tracks: calendar 41, city 34, foliage 49, walk 47.
+- Why: the MIT Vimeo test zip returns HTTP 403, and Vid4 is the public bicubic video set that can actually be downloaded.
+- Files: `scripts/run_vid4.py`, `scripts/vid4_means.py`, `scripts/run_pyramid_midpoint.py`, `scripts/pool_reds_fid.py`, `paper/main.tex`, `CONTEXT.md`, `README.md`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Scored Vid4 on the REDS bicubic checkpoints. BasicVSR++ is 26.26 dB and EDVR-L is 25.37 dB over 171 frames. STAR and the disagreement hybrid are in the same table.
+- Scored the course Pyramid Flow midpoint sample on REDS4: start index 10 of 20, PSNR 17.94, FID 165.99. The released generate() path stays a failure. Texture-hybrid FID is 31.20.
+- Why: the extra benchmark and the conditional sample both have frames now, so the report can show those numbers instead of blank cells.
+- Files: `scripts/run_vid4.py`, `scripts/score_pyramid_midpoint.py`, `scripts/reds_means.py`, `paper/main.tex`, `paper/main.pdf`, `docs/results/vid4_means.json`, `docs/results/vid4_pooled_fid.json`, `docs/results/pyramid_midpoint.json`, `docs/results/reds4_means.json`, `docs/results/reds4_pooled_fid.json`, `docs/workload/log.md`.

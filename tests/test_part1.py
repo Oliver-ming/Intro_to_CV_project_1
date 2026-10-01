@@ -439,3 +439,21 @@ def test_generator_weights_strips_the_openmmlab_prefix():
         "upconv2.bias",
     }
     assert state["conv.weight"] is weight
+
+
+def test_vid4_table_fill_leaves_the_reds_bicubic_row():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "vid4_means",
+        Path(__file__).resolve().parents[1] / "scripts" / "vid4_means.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    text = "Bicubic & 26.24 & 0.7319 & 0.4577 & 0.0221 & 42.79 \\\\\nVid4 bicubic & --- & --- & --- & --- & --- \\\\\n"
+    means = {
+        "Vid4 bicubic": {"psnr_rgb": 22.0, "ssim_rgb": 0.6, "lpips": 0.3, "tlpips": 0.02, "pooled_fid": 9.0, "frames": 171},
+    }
+    filled = module.fill_table(text, means)
+    assert filled.startswith("Bicubic & 26.24")
+    assert "Vid4 bicubic & 22.00 & 0.6000 & 0.3000 & 0.0200 & 9.00 \\\\" in filled

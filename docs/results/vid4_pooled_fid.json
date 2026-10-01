@@ -1,0 +1,12 @@
+{
+  "Vid4 bicubic": 100.77645325129103,
+  "Vid4 Lanczos": 97.7785598139441,
+  "Vid4 EDSR": 50.80115943660362,
+  "Vid4 temporal average": 108.48072379102783,
+  "Vid4 unsharp": 102.20308986653632,
+  "Vid4 EDVR-L": 27.874529557945344,
+  "Vid4 BasicVSR++": 20.452846140892053,
+  "Vid4 TecoGAN, not released": 31.790142555288092,
+  "Vid4 STAR": 316.41535531215374,
+  "Vid4 hybrid": 87.36742576113066
+}

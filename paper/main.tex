@@ -11,7 +11,7 @@
 \def\confYear{2026}
 
 \title{Video Super-Resolution with Temporal Consistency\\
-on REDS4 and a Frozen Vimeo Subset}
+on REDS4 and Vid4}
 
 \author{Yuming Zhang\\
 The Hong Kong University of Science and Technology (Guangzhou)\\
@@ -28,7 +28,7 @@ Part~1 compares bicubic and Lanczos upsampling, a frame-wise EDSR baseline, and 
 Part~2 runs EDVR and records the released TecoGAN checkpoint as a TensorFlow model that this Python environment cannot load.
 Part~3 treats Pyramid Flow as a conditioned generator only when the sampler can start from a noisy bicubic upsample, runs STAR from its released weights, and blends BasicVSR++ with STAR through a disagreement map.
 REDS4 is scored on RGB with no border crop.
-A 30-clip Vimeo subset is frozen from the official test list. It is not scored, because the official test archive returns HTTP 403.
+The extra benchmark is Vid4, with the official BasicSR $4\times$ bicubic frames. The MIT Vimeo test archive returns HTTP 403, so that 30-clip subset is not scored.
 The public repository link will be added here when the remote exists.
 \end{abstract}
 
@@ -66,7 +66,8 @@ LoRA is a low-rank update used as a course experiment here, not as STAR's traini
 Quality is not one number.
 SSIM compares structure~\cite{wang2004ssim}.
 LPIPS compares deep features~\cite{zhang2018lpips}.
-REDS and Vimeo-90K supply the benchmark clips and the bicubic low-resolution track we evaluate~\cite{nah2019reds,xue2019vimeo}.
+REDS, Vid4, and Vimeo-90K are the usual bicubic video super-resolution benchmarks~\cite{nah2019reds,xue2019vimeo}.
+This report scores REDS4 and Vid4.
 
 \section{Method}
 \subsection{Shared input}
@@ -75,10 +76,10 @@ Low-resolution frames come from \texttt{train\_sharp\_bicubic/X4}, the MATLAB \t
 Our bicubic and Lanczos kernels only upsample those frames.
 They are checked against OpenCV and are not used to rebuild the benchmark input.
 
-The Vimeo benchmark is 30 seven-frame clips drawn once, without replacement, from BasicSR's 7824-clip official test list with numpy seed 0.
-The frozen list begins 00071/0454, 00080/0999, 00061/0846, 00053/0310, and 00075/0384.
-Tables call this set ``Vimeo subset (30)''.
-They do not call it the full Vimeo-90K-T.
+Vid4 is calendar, city, foliage, and walk, taken from BasicSR's public Vid4 archive.
+Low-resolution frames are the official \texttt{BIx4} track, and ground truth is the \texttt{GT} track in the same archive.
+This is not Vimeo-90K.
+The frozen 30-clip Vimeo list remains in \texttt{docs/manifests/vimeo-subset.txt}, and it is not scored: both MIT test archives return HTTP 403.
 
 \subsection{Part 1}
 Bicubic upsampling uses OpenCV's cubic ($a=-0.75$), four taps, and replicated borders.
@@ -98,7 +99,7 @@ Sigma 1 and amount 1 are course defaults.
 EDVR-L uses the released bicubic checkpoint through BasicSR: 128 features, five input frames, deformable groups 8, TSA fusion, and \texttt{reflection\_circle} padding~\cite{wang2019edvr}.
 On a 100-frame clip the window for the first frame is indices 4, 3, 0, 1, 2.
 The REDS blur-downsampling checkpoint is not this row.
-The Vimeo row, when the frames exist, uses the Vimeo-90K EDVR-L checkpoint.
+The 7-frame Vimeo-90K EDVR-L checkpoint is a different file and is not loaded into this 5-frame model. Vid4 uses the same REDS bicubic checkpoint as REDS4.
 
 The released TecoGAN archive is a TensorFlow~1 checkpoint~\cite{chu2020tecogan}.
 \texttt{env\_cv} is Python~3.10 and cannot install TensorFlow~1, so those weights are not loaded.
@@ -109,7 +110,10 @@ Pyramid Flow's released model generates video from text, and its image-to-video 
 A result enters the metric table only when the official sampler can noise the whole bicubic-upscaled clip and integrate from a start near the middle of its own schedule.
 The table records that start index and the number of function evaluations.
 Official image-to-video and pure text-to-video samples do not.
-The pinned Pyramid Flow source (\texttt{a012faa1}) exposes only those two entry points, so this direction is recorded as a failure case in \texttt{docs/results/pyramid\_flow\_attempt.json}.
+The pinned Pyramid Flow source (\texttt{a012faa1}) exposes only those two entry points, so the official interface stays a failure case in \texttt{docs/results/pyramid\_flow\_attempt.json}.
+A separate course sampler encodes the bicubic upsample with the released VAE, mixes noise at the middle index of the last-stage schedule, and continues with \texttt{scheduler.step}.
+On REDS4 that sample starts at index 10 of 20 last-stage steps and scores 17.94\,dB.
+It is not the released \texttt{generate()} path.
 
 STAR's official row is inference with the released weights on the shared bicubic input.
 Its training degradation is real-world (OpenVid with a Real-ESRGAN-style pipeline), and the table says so~\cite{xie2025star}.
@@ -143,13 +147,14 @@ If STAR does not run, the hybrid is a failure case.
 Each REDS4 clip has 100 frames.
 The official low-resolution frames are $180\times320$, and the ground-truth frames are $720\times1280$, so the shared scale is exactly 4.
 Four clips give 400 frames.
-The Vimeo subset has 30 septuplets, 210 frames in total, each ground-truth frame $256\times448$ before the official 4$\times$ downsample.
+Vid4 has 171 frames: calendar 41, city 34, foliage 49, and walk 47.
+Ground-truth sizes are $720\times576$, $704\times576$, $720\times480$, and $720\times480$.
+The low-resolution frames are exactly one quarter of those sizes.
 Full-reference scores use every frame.
 There is no border crop and no held-out frame inside a clip.
 
 \subsection{Protocol}
-PSNR and SSIM~\cite{wang2004ssim} on REDS4 use RGB and no border crop, including every frame, matching EDVR and BasicVSR.
-On the Vimeo subset they use the Y channel and no border crop.
+PSNR and SSIM~\cite{wang2004ssim} on REDS4 and on Vid4 use RGB and no border crop, including every frame.
 LPIPS uses AlexNet on RGB~\cite{zhang2018lpips}.
 tLPIPS is TecoGAN's tLP~\cite{chu2020tecogan}.
 With $d$ the AlexNet LPIPS of two frames,
@@ -157,10 +162,6 @@ With $d$ the AlexNet LPIPS of two frames,
 \mathrm{tLPIPS} = \frac{1}{T-1}\sum_{t=2}^{T}\bigl|d(\hat{x}_t,\hat{x}_{t-1}) - d(x_t,x_{t-1})\bigr|.
 \end{equation}
 We report that value, not the $\times 100$ display scale used in the paper's tables.
-On the Vimeo subset, PSNR and SSIM use the BT.601 luma of an RGB frame scaled to $[0,1]$,
-\begin{equation}
-Y = 65.481R + 128.553G + 24.966B + 16.
-\end{equation}
 FID pools the restored frames against the ground-truth frames of that set.
 The report states the frame count, so the number is not compared with a full-dataset paper FID.
 Scores use 8-bit quantized frames.
@@ -168,7 +169,7 @@ Full-reference scores require ground truth.
 A wild video, which we do not have yet, will be judged visually.
 
 \subsection{What has been run}
-Table~\ref{tab:status} records the state of each row. Every REDS4 method that ran has 100 frames in each of clips 000, 011, 015, and 020, and Table~\ref{tab:metrics} gives the 400-frame scores. The MIT Vimeo host returns HTTP 403, so the 30-clip subset is not scored. The 7-frame Vimeo EDVR-L checkpoint is on disk and is not loaded into the 5-frame REDS model.
+Table~\ref{tab:status} records the state of each row. Every REDS4 method that ran has 100 frames in each of clips 000, 011, 015, and 020, and Table~\ref{tab:metrics} gives the 400-frame scores. Vid4 uses the same checkpoints on the official \texttt{BIx4} frames, and Table~\ref{tab:vid4} gives those scores. The 7-frame Vimeo EDVR-L checkpoint is on disk and is not loaded into the 5-frame REDS model.
 
 \begin{table}[t]
 \centering
@@ -186,7 +187,7 @@ EDVR-L REDS bicubic & Scored \\
 TecoGAN released & Failure: TensorFlow~1 checkpoint \\
 TecoGAN PyTorch substitute & Scored, not the release \\
 BasicVSR++ REDS4 bicubic & Scored \\
-Pyramid Flow midpoint & Failure: no such sampler entry \\
+Pyramid Flow midpoint & Course sampler; official \texttt{generate()} unused \\
 STAR light degradation & Four clips, one frame at a time \\
 STAR course LoRA & Failure: no LoRA parameters \\
 Disagreement-map hybrid & Blended and scored \\
@@ -205,7 +206,9 @@ YuNet and the EAST text graph are both on disk. An empty detector mask does not 
 \caption{Clip 000, frame 50. Top: bicubic, EDVR-L, BasicVSR++, and official STAR. Bottom: the 160$\times$160 patch with the strongest bicubic detail. In that patch the car edges are softer after bicubic upsampling than after EDVR-L or BasicVSR++. STAR was trained on real-world degradation, so this bicubic input is outside that training degradation.}
 \label{fig:reds-visual}
 \end{figure}
-Pyramid Flow, the released TecoGAN weights, and the STAR LoRA row stay failure cases.
+The released TecoGAN weights and the STAR LoRA row stay failure cases.
+Pyramid Flow's released \texttt{generate()} and \texttt{generate\_i2v} stay failure cases.
+The course midpoint sampler is a separate row in Table~\ref{tab:metrics}: index 10 of 20 steps, 17.94\,dB, FID 165.99.
 STAR and the non-official PyTorch TecoGAN are scored on the shared bicubic input and labeled as a mismatched degradation and a substitute checkpoint.
 The released TecoGAN checkpoint has no score.
 
@@ -234,29 +237,33 @@ TecoGAN released & \multicolumn{5}{c}{not loaded} \\
 TecoGAN PyTorch, not released & 27.62 & 0.7965 & 0.1646 & 0.0058 & 13.10 \\
 STAR light degradation & 19.28 & 0.4602 & 0.4814 & 0.2614 & 95.92 \\
 STAR LoRA & \multicolumn{5}{c}{no interface} \\
-Pyramid Flow & \multicolumn{5}{c}{no midpoint sampler} \\
+Pyramid Flow & 17.94 & 0.4622 & 0.7152 & 0.2066 & 165.99 \\
 Hybrid & 27.26 & 0.8276 & 0.1848 & 0.0672 & 19.72 \\
-Texture hybrid & 25.07 & 0.7819 & 0.2344 & 0.1023 & --- \\
+Texture hybrid & 25.07 & 0.7819 & 0.2344 & 0.1023 & 31.20 \\
 \hline
 \end{tabular}}
 \end{table}
 
 \begin{table}[t]
 \centering
-\caption{Vimeo subset (30): 210 frames. PSNR and SSIM are Y with no border crop. FID is one Fréchet distance on all 210 frames. Cells stay blank while the official archive returns HTTP 403.}
-\label{tab:vimeo}
+\caption{Vid4: calendar, city, foliage, and walk, 171 frames. PSNR and SSIM are RGB with no border crop. FID is one Fréchet distance on all 171 frames. The same REDS bicubic checkpoints are used. This table is not a Vimeo-90K result.}
+\label{tab:vid4}
 \scriptsize
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{@{}lccccc@{}}
 \hline
 Method & PSNR & SSIM & LPIPS & tLPIPS & FID \\
 \hline
-Vimeo bicubic & --- & --- & --- & --- & --- \\
-Vimeo Lanczos & --- & --- & --- & --- & --- \\
-Vimeo EDSR & --- & --- & --- & --- & --- \\
-Vimeo temporal average & --- & --- & --- & --- & --- \\
-Vimeo unsharp & --- & --- & --- & --- & --- \\
-Vimeo EDVR-L & --- & --- & --- & --- & --- \\
+Vid4 bicubic & 22.46 & 0.6146 & 0.5096 & 0.0276 & 100.78 \\
+Vid4 Lanczos & 22.59 & 0.6212 & 0.5155 & 0.0268 & 97.78 \\
+Vid4 EDSR & 23.88 & 0.7073 & 0.3271 & 0.0095 & 50.80 \\
+Vid4 temporal average & 21.85 & 0.5842 & 0.5426 & 0.0483 & 108.48 \\
+Vid4 unsharp & 22.03 & 0.5987 & 0.5117 & 0.0450 & 102.20 \\
+Vid4 EDVR-L & 25.37 & 0.7956 & 0.2242 & 0.0093 & 27.87 \\
+Vid4 BasicVSR++ & 26.26 & 0.8282 & 0.1892 & 0.0151 & 20.45 \\
+Vid4 TecoGAN, not released & 23.48 & 0.7166 & 0.1881 & 0.0066 & 31.79 \\
+Vid4 STAR & 15.05 & 0.2519 & 0.7059 & 0.5504 & 316.42 \\
+Vid4 hybrid & 21.33 & 0.6583 & 0.3534 & 0.2994 & 87.37 \\
 \hline
 \end{tabular}}
 \end{table}
@@ -287,7 +294,7 @@ These differences are why the later tables keep the five Part~1 rows separate fr
 EDVR-L reads RGB scaled to $[0,1]$ and emits RGB scaled back to $[0,255]$ before quantization.
 The REDS checkpoint uses five frames.
 On a 100-frame clip, the window for frame 0 is indices 4, 3, 0, 1, 2 under \texttt{reflection\_circle} padding.
-The Vimeo checkpoint uses seven frames, the whole septuplet, and is a different weight file from the REDS model.
+Vid4 is restored with that same 5-frame REDS checkpoint. The 7-frame Vimeo checkpoint is a different weight file and is not loaded.
 BasicVSR++ runs the low-resolution clip as one recurrent sequence, with 64 mid channels and 7 residual blocks.
 The released REDS4 checkpoint already contains SpyNet.
 Official STAR uses the light-degradation I2VGen-XL weights, the fast solver, and 15 function evaluations.
@@ -321,19 +328,19 @@ Three rows are failures because the released interface does not implement the co
 The TecoGAN archive is 11288778 bytes and contains \texttt{TecoGAN.data-00000-of-00001}, \texttt{TecoGAN.index}, and \texttt{TecoGAN.meta}.
 Those are TensorFlow~1 checkpoint shards. No PyTorch state dict is in the archive, and the course environment cannot install TensorFlow~1.
 Pyramid Flow at \texttt{a012faa1} has \texttt{generate}, which samples from noise, and \texttt{generate\_i2v}, which keeps one clean image latent as history.
-It has no call that noises a whole bicubic-upscaled clip and integrates from the sampler midpoint, so that row stays out of the metric table.
+Neither call noises a whole bicubic-upscaled clip and integrates from the sampler midpoint.
+The course sampler does that with the released VAE and \texttt{scheduler.step}, and that attempt is not reported as the official interface.
 STAR at \texttt{69b8bc53} optimizes \texttt{VideoControlNet} and parameters whose names contain \texttt{local}.
 The optimizer list has no LoRA weights, so rank 8, 200 steps, batch size 1, and learning rate $10^{-4}$ were not run.
 A separate PyTorch generator trained on Vimeo bicubic data has now restored the four REDS4 clips.
 It is not the released TecoGAN checkpoint.
 
 \subsection{Reproducibility}
-The code, the frozen Vimeo list, and this draft live in one git repository.
+The code and this draft live in one git repository.
 Part~1 is \texttt{scripts/run\_part1.py}.
 EDVR-L on REDS4 is \texttt{scripts/run\_edvr.py} with the 5-frame bicubic checkpoint.
-The Vimeo rows are \texttt{scripts/run\_part1\_vimeo.py} and \texttt{scripts/run\_edvr\_vimeo.py}.
-Both refuse to run without the official frames.
-\texttt{scripts/fetch\_vimeo\_sr\_test.py} extracts the frozen 30 clips only after that zip is complete.
+Vid4 is \texttt{scripts/run\_vid4.py}.
+It reads \texttt{data/vid4/Vid4/BIx4} and \texttt{data/vid4/Vid4/GT}.
 BasicVSR++ is \texttt{scripts/run\_basicvsrpp.py}.
 The non-official TecoGAN generator is \texttt{scripts/run\_tecogan\_not\_official.py}.
 Official STAR is \texttt{scripts/run\_star\_official.py}, and the hybrid is \texttt{scripts/run\_hybrid.py}.
@@ -351,9 +358,8 @@ They are not used to synthesize a new benchmark.
 REDS4 is four training clips held out of the fit, not the official REDS validation split.
 The validation split is a different set of clips.
 Reporting REDS4 as ``REDS val'' would name the wrong videos.
-Table~\ref{tab:vimeo} is already labeled ``Vimeo subset (30)'' and states 210 frames.
-It is not the full Vimeo-90K test set of 7824 septuplets.
-Its numeric cells stay blank until the official archive can be downloaded.
+Table~\ref{tab:vid4} is Vid4, 171 frames from four sequences.
+It is not Vimeo-90K, and it is not the frozen 30-clip list that the MIT host refused.
 
 tLPIPS is the absolute gap between two LPIPS values: the restored pair and the ground-truth pair.
 It is not the LPIPS of a frame-difference image.
@@ -374,12 +380,14 @@ BasicVSR++ alone is not reported as the blend.
 The pipeline separates official bicubic evaluation from course choices: the temporal-average kernel, the unsharp defaults, the Pyramid Flow midpoint, the STAR LoRA budget, and the disagreement map.
 Limitations follow from that split.
 Generative models trained on real-world degradations are scored on bicubic inputs, so a lower PSNR is not a pure architecture comparison.
-The Vimeo numbers, once the official test package is reachable, will describe 30 frozen clips, not the full test set.
+Vid4 numbers describe those four sequences, not Vimeo-90K.
+On these 171 frames, BasicVSR++ reaches 26.26\,dB and EDVR-L reaches 25.37\,dB.
+Both rows use the REDS bicubic checkpoints, so they are not a published Vid4 operating point.
 TecoGAN's released checkpoint cannot run in the course environment, and the PyTorch substitute is labeled as a different model.
 On the 400 REDS4 frames, BasicVSR++ reaches 32.39\,dB and EDVR-L reaches 31.09\,dB.
 Official STAR, run one frame at a time, reaches 19.28\,dB with tLPIPS 0.261.
 The hybrid, which keeps detector boxes from BasicVSR++ and blends the remaining pixels by disagreement, reaches 27.26\,dB.
-The Vimeo subset stays unscored while the MIT package returns HTTP 403.
+The MIT Vimeo package stays unscored. Vid4 is the scored substitute, and its rows use the REDS bicubic checkpoints on the official \texttt{BIx4} input.
 
 {
 \small

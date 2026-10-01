@@ -14,7 +14,7 @@ Use `../env_cv`. From this directory:
 
 Official REDS archives go in `data/zips/` and are not committed. See `docs/manifests/downloads.md`. After `train_sharp.zip` and `train_sharp_bicubic.zip` finish, REDS4 clips `000`, `011`, `015`, and `020` are extracted under `data/reds/`. Resume a dropped ground-truth download with `../env_cv/bin/python scripts/fetch_train_sharp.py`. It keeps using the stable Hugging Face URL.
 
-REDS4 ground truth is extracted. The MIT packages `vimeo_super_resolution_test.zip` and `vimeo_test_clean.zip` still return HTTP 403, so the 30-clip subset is not scored. `scripts/fetch_vimeo_sr_test.py` extracts those clips only after both a low-resolution tree and a ground-truth tree are in the zips. Ground truth under `sequences/` counts.
+REDS4 ground truth is extracted. The extra benchmark is Vid4 under `data/vid4/Vid4`, with official `BIx4` and `GT` frames. Run it with `../env_cv/bin/python scripts/run_vid4.py`. The MIT packages `vimeo_super_resolution_test.zip` and `vimeo_test_clean.zip` still return HTTP 403, so the 30-clip subset is not scored. `scripts/fetch_vimeo_sr_test.py` extracts those clips only after both a low-resolution tree and a ground-truth tree are in the zips. Ground truth under `sequences/` counts.
 
 ## Run Part 1
 
@@ -32,7 +32,7 @@ PYTHONPATH=third_party/BasicSR ../env_cv/bin/python scripts/run_edvr.py
 
 This needs `weights/EDVR_L_x4_SR_REDS_official-9f5f5039.pth` and the extracted REDS4 low-resolution frames. It uses the pinned BasicSR EDVR-L: five frames and `reflection_circle` padding.
 
-The Vimeo subset uses a different checkpoint, the 7-frame `EDVR_L_x4_SR_Vimeo90K_official-162b54e4.pth`:
+Vid4 uses the same 5-frame REDS checkpoint. The 7-frame Vimeo file `EDVR_L_x4_SR_Vimeo90K_official-162b54e4.pth` is a different model:
 
 ```bash
 PYTHONPATH=third_party/BasicSR ../env_cv/bin/python scripts/run_edvr_vimeo.py

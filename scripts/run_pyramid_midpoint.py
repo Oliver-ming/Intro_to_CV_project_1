@@ -67,24 +67,28 @@ def main() -> None:
         load_text_encoder=True,
         load_vae=True,
     )
-    model.vae.to(device)
-    model.dit.to(device)
-    model.text_encoder.to(device)
     model.vae.enable_tiling()
+    model.text_encoder.to("cpu")
+    model.dit.to("cpu")
+    model.vae.to("cpu")
+    prompts = _prompts(model, device)
     output_root = ROOT / "outputs" / "part3" / "pyramid_midpoint"
     summary = {
         "method": "course conditional sample from the sampler midpoint",
         "official_video_sr_api": False,
+        "text_encoder": "cpu",
+        "classifier_free_guidance": "two sequential forwards",
         "clips": {},
     }
     for clip in CLIPS:
         low_dir = ROOT / "data" / "reds" / "train" / "train_sharp_bicubic" / "X4" / clip
         low = [upsample(_read(path), 4, "bicubic") for path in sorted(low_dir.glob("*.png"))]
-        restored, start = _restore_clip(model, low, device)
-        write_sequence(output_root / "frames" / clip, restored)
+        frame_dir = output_root / "frames" / clip
+        restored, start = _restore_clip(model, low, device, prompts, frame_dir)
         write_video(output_root / f"{clip}.mp4", restored)
         summary["clips"][clip] = {"frames": int(len(restored)), "start_index": start}
         print(clip, "done", start, flush=True)
+        (ROOT / "docs" / "results" / "pyramid_midpoint.json").write_text(json.dumps(summary, indent=2) + "\n")
     output_root.mkdir(parents=True, exist_ok=True)
     (output_root / "metrics.json").write_text(json.dumps(summary, indent=2) + "\n")
     (ROOT / "docs" / "results" / "pyramid_midpoint.json").write_text(json.dumps(summary, indent=2) + "\n")
@@ -97,16 +101,62 @@ def _read(path: Path) -> np.ndarray:
     return cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB).astype(np.float32)
 
 
-def _restore_clip(model, frames: list[np.ndarray], device: torch.device) -> tuple[np.ndarray, int]:
-    outputs = []
-    start_index = None
-    for frame in frames:
-        image, start_index = _restore_frame(model, frame, device)
-        outputs.append(image)
-    return np.stack(outputs), int(start_index)
+def _prompts(model, device: torch.device) -> dict[str, torch.Tensor]:
+    positive = model.text_encoder(PROMPT, torch.device("cpu"))
+    negative = model.text_encoder("", torch.device("cpu"))
+    model.text_encoder.to("cpu")
+    keys = ("embeds", "mask", "pooled")
+    packed = {}
+    for name, value in zip(keys, positive):
+        packed[name] = value.to(device=device)
+    for name, value in zip(keys, negative):
+        packed["negative_" + name] = value.to(device=device)
+    return packed
 
 
-def _restore_frame(model, frame: np.ndarray, device: torch.device) -> tuple[np.ndarray, int]:
+def _restore_clip(
+    model,
+    frames: list[np.ndarray],
+    device: torch.device,
+    prompts: dict[str, torch.Tensor],
+    frame_dir: Path,
+) -> tuple[np.ndarray, int]:
+    from part1.io import write_frame
+
+    frame_dir.mkdir(parents=True, exist_ok=True)
+    pending = [index for index in range(len(frames)) if not (frame_dir / f"{index:08d}.png").is_file()]
+    start = midpoint_index(20)
+    if pending:
+        model.dit.to("cpu")
+        model.vae.to(device)
+        torch.cuda.empty_cache()
+        encoded = {index: _encode(model, frames[index], device).cpu() for index in pending}
+        model.vae.to("cpu")
+        torch.cuda.empty_cache()
+        model.dit.to(device)
+        cache = frame_dir / "latents"
+        cache.mkdir(parents=True, exist_ok=True)
+        for index in pending:
+            cache_path = cache / f"{index:08d}.pt"
+            if cache_path.is_file():
+                continue
+            latent, start = _denoise_latent(model, encoded[index].to(device), device, prompts)
+            torch.save(latent.cpu(), cache_path)
+            print("denoised", index + 1, "/", len(frames), flush=True)
+        model.dit.to("cpu")
+        torch.cuda.empty_cache()
+        model.vae.to(device)
+        for index in pending:
+            latent = torch.load(cache / f"{index:08d}.pt", map_location=device, weights_only=True)
+            image = _decode(model, latent, frames[index].shape)
+            write_frame(frame_dir / f"{index:08d}.png", image)
+            print("frame", index + 1, "/", len(frames), flush=True)
+        model.vae.to("cpu")
+        torch.cuda.empty_cache()
+    return np.stack([_read(frame_dir / f"{index:08d}.png") for index in range(len(frames))]), start
+
+
+def _encode(model, frame: np.ndarray, device: torch.device) -> torch.Tensor:
     import torch.nn.functional as functional
 
     resized = functional.interpolate(
@@ -118,38 +168,54 @@ def _restore_frame(model, frame: np.ndarray, device: torch.device) -> tuple[np.n
     video = resized.to(device=device, dtype=model.vae.dtype) / 127.5 - 1.0
     with torch.no_grad():
         latent = model.vae.encode(video).latent_dist.sample()
-    latent = (latent - model.vae_shift_factor) * model.vae_scale_factor
+    return (latent - model.vae_shift_factor) * model.vae_scale_factor
+
+
+def _denoise_latent(
+    model,
+    latent: torch.Tensor,
+    device: torch.device,
+    prompts: dict[str, torch.Tensor],
+) -> tuple[torch.Tensor, int]:
     stage = len(model.stages) - 1
     model.scheduler.set_timesteps(20, stage, device=device)
     start = midpoint_index(int(model.scheduler.timesteps.shape[0]))
     sigma = model.scheduler.sigmas[start]
     noise = torch.randn_like(latent)
-    noisy = flow_mix(latent, noise, sigma.to(latent.dtype))
+    latents = flow_mix(latent, noise, sigma.to(latent.dtype))
     model.scheduler._step_index = start
     model._guidance_scale = 7.0
     model._video_guidance_scale = 7.0
-    prompt_embeds, prompt_attention_mask, pooled = model.text_encoder(PROMPT, device)
-    negative_embeds, negative_mask, negative_pooled = model.text_encoder("", device)
-    prompt_embeds = torch.cat([negative_embeds, prompt_embeds], dim=0)
-    pooled = torch.cat([negative_pooled, pooled], dim=0)
-    prompt_attention_mask = torch.cat([negative_mask, prompt_attention_mask], dim=0)
-    latents = noisy
-    for timestep in model.scheduler.timesteps[start:]:
-        model_input = torch.cat([latents, latents], dim=0)
-        step = timestep.expand(model_input.shape[0]).to(model_input.dtype)
-        prediction = model.dit(
-            sample=[[model_input]],
-            timestep_ratio=step,
-            encoder_hidden_states=prompt_embeds,
-            encoder_attention_mask=prompt_attention_mask,
-            pooled_projections=pooled,
-        )[0]
-        uncond, cond = prediction.chunk(2)
-        guided = uncond + model.guidance_scale * (cond - uncond)
-        latents = model.scheduler.step(guided, step[:1], latents).prev_sample
-    decoded = model.decode_latent(latents, save_memory=True)
-    array = np.asarray(decoded[0].resize((frame.shape[1], frame.shape[0]))).astype(np.float32)
-    return array, start
+    with torch.no_grad():
+        for timestep in model.scheduler.timesteps[start:]:
+            uncond = _denoise(model, latents, timestep, prompts, negative=True)
+            cond = _denoise(model, latents, timestep, prompts, negative=False)
+            guided = uncond + model.guidance_scale * (cond - uncond)
+            step = timestep.expand(1).to(latents.dtype)
+            latents = model.scheduler.step(guided, step, latents).prev_sample
+    return latents, start
+
+
+def _decode(model, latents: torch.Tensor, shape: tuple[int, ...]) -> np.ndarray:
+    with torch.no_grad():
+        decoded = model.decode_latent(latents, save_memory=True)
+    return np.asarray(decoded[0].resize((shape[1], shape[0]))).astype(np.float32)
+
+
+def _denoise(model, latents: torch.Tensor, timestep: torch.Tensor, prompts: dict[str, torch.Tensor], negative: bool) -> torch.Tensor:
+    prefix = "negative_" if negative else ""
+    embeds = prompts[prefix + "embeds"].to(dtype=latents.dtype)
+    mask = prompts[prefix + "mask"]
+    pooled = prompts[prefix + "pooled"].to(dtype=latents.dtype)
+    step = timestep.expand(latents.shape[0]).to(latents.dtype)
+    prediction = model.dit(
+        sample=[[latents]],
+        timestep_ratio=step,
+        encoder_hidden_states=embeds,
+        encoder_attention_mask=mask,
+        pooled_projections=pooled,
+    )[0]
+    return prediction
 
 
 if __name__ == "__main__":
