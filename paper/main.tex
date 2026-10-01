@@ -239,6 +239,26 @@ Hybrid & 27.26 & 0.8276 & 0.1848 & 0.0672 & 19.72 \\
 \end{tabular}}
 \end{table}
 
+\begin{table}[t]
+\centering
+\caption{Vimeo subset (30): 210 frames. PSNR and SSIM are Y with no border crop. FID is one Fréchet distance on all 210 frames. Cells stay blank while the official archive returns HTTP 403.}
+\label{tab:vimeo}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{@{}lccccc@{}}
+\hline
+Method & PSNR & SSIM & LPIPS & tLPIPS & FID \\
+\hline
+Vimeo bicubic & --- & --- & --- & --- & --- \\
+Vimeo Lanczos & --- & --- & --- & --- & --- \\
+Vimeo EDSR & --- & --- & --- & --- & --- \\
+Vimeo temporal average & --- & --- & --- & --- & --- \\
+Vimeo unsharp & --- & --- & --- & --- & --- \\
+Vimeo EDVR-L & --- & --- & --- & --- & --- \\
+\hline
+\end{tabular}}
+\end{table}
+
 Figure~\ref{fig:reds-visual} is clip 000 at frame 50, a roadside scene with parked cars, a painted curb, and foliage.
 The bottom row is one $160\times160$ patch, chosen as the bicubic crop with the largest Laplacian variance, so the comparison is on detail rather than on a flat road.
 Bicubic upsampling leaves the car boundary soft.

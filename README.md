@@ -38,7 +38,7 @@ The Vimeo subset uses a different checkpoint, the 7-frame `EDVR_L_x4_SR_Vimeo90K
 PYTHONPATH=third_party/BasicSR ../env_cv/bin/python scripts/run_edvr_vimeo.py
 ```
 
-It reads `docs/manifests/vimeo-subset.txt` and scores PSNR and SSIM on Y. It does not run until `data/vimeo` contains the official low-resolution frames.
+It reads `docs/manifests/vimeo-subset.txt` and scores PSNR and SSIM on Y. Part 1 on the same frames is `scripts/run_part1_vimeo.py`. Neither runs until `data/vimeo` contains the official low-resolution frames. `scripts/vimeo_means.py` fills Table 2 only when every clip has a Y-channel PSNR.
 
 ## BasicVSR++ and the disagreement-map hybrid
 

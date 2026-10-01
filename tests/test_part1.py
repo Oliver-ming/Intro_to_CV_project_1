@@ -288,6 +288,24 @@ def test_reds_archive_is_not_ready_while_aria2_control_exists():
         assert module.retry_pause(10, 10, True) is False
 
 
+def test_vimeo_table_fill_leaves_the_reds_bicubic_row():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "vimeo_means",
+        Path(__file__).resolve().parents[1] / "scripts" / "vimeo_means.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    text = "Bicubic & 26.24 & 0.7319 & 0.4577 & 0.0221 & 42.79 \\\\\nVimeo bicubic & --- & --- & --- & --- & --- \\\\\n"
+    means = {
+        "Vimeo bicubic": {"psnr_y": 30.0, "ssim_y": 0.9, "lpips": 0.2, "tlpips": 0.01, "pooled_fid": 4.0, "frames": 210},
+    }
+    filled = module.fill_table(text, means)
+    assert filled.startswith("Bicubic & 26.24")
+    assert "Vimeo bicubic & 30.00 & 0.9000 & 0.2000 & 0.0100 & 4.00 \\\\" in filled
+
+
 def test_vimeo_archive_member_matches_only_a_subset_clip():
     import importlib.util
 

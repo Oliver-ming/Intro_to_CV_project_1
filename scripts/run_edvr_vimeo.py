@@ -62,6 +62,10 @@ def main() -> None:
         print(key, "done", flush=True)
     output_root.mkdir(parents=True, exist_ok=True)
     (output_root / "metrics.json").write_text(json.dumps(summary, indent=2) + "\n")
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from vimeo_means import main as write_means
+
+    write_means()
 
 
 def _load(device: torch.device) -> EDVR:

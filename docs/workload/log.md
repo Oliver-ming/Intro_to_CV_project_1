@@ -439,3 +439,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added a downloader that extracts the frozen 30 Vimeo clips only after the official zip is a complete archive. An HTTP 403 leaves the frames untouched.
 - Why: the subset cannot be scored until `vimeo_super_resolution_test.zip` is actually downloaded.
 - Files: `scripts/fetch_vimeo_sr_test.py`, `tests/test_part1.py`, `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Added the Vimeo subset score table and the Part 1 runner that fills it from Y-channel scores. The cells stay blank while the official archive is missing.
+- Why: the 30-clip results have to land in the report without overwriting the REDS4 rows.
+- Files: `scripts/run_part1_vimeo.py`, `scripts/vimeo_means.py`, `scripts/run_edvr_vimeo.py`, `paper/main.tex`, `paper/main.pdf`, `tests/test_part1.py`, `README.md`, `docs/workload/log.md`.
