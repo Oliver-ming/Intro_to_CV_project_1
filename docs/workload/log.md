@@ -427,3 +427,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Recorded that the official Vimeo test archive returns HTTP 403, and corrected the abstract so it no longer says that subset was scored.
 - Why: the 30-clip Y-channel table cannot be filled without the official low-resolution frames.
 - Files: `docs/results/vimeo_official_archive.json`, `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- The discussion now follows the measured temporal-average scores: PSNR falls and tLPIPS rises relative to bicubic.
+- Why: the previous sentence said the average should lower flicker, which contradicts tLPIPS 0.123 against bicubic 0.022.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.

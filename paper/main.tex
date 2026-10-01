@@ -330,9 +330,9 @@ tLPIPS is the absolute gap between two LPIPS values: the restored pair and the g
 It is not the LPIPS of a frame-difference image.
 A method can raise PSNR while increasing tLPIPS if the extra detail flickers.
 That is why the temporal average and the unsharp variant stay in the table even though they are course baselines.
-The temporal average should lower flicker and also lower sharpness.
-Unsharp masking should put contrast back and can put flicker back with it.
 On these 400 frames the temporal average scores 22.07\,dB and tLPIPS 0.123, and the unsharp variant scores 22.15\,dB and tLPIPS 0.119, against bicubic at 26.24\,dB and tLPIPS 0.022.
+Mixing neighboring bicubic frames lowers PSNR and raises tLPIPS.
+Unsharp masking restores a little of the PSNR and does not bring tLPIPS back to the bicubic value.
 
 The disagreement map is not an uncertainty estimate from EDVR, BasicVSR++, or STAR.
 It is the normalized absolute difference of two restorations on one frame.
