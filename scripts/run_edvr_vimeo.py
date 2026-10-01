@@ -63,9 +63,9 @@ def main() -> None:
     output_root.mkdir(parents=True, exist_ok=True)
     (output_root / "metrics.json").write_text(json.dumps(summary, indent=2) + "\n")
     sys.path.insert(0, str(ROOT / "scripts"))
-    from vimeo_means import main as write_means
+    from pool_vimeo_fid import main as pool_fid
 
-    write_means()
+    pool_fid()
 
 
 def _load(device: torch.device) -> EDVR:

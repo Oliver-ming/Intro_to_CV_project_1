@@ -18,7 +18,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from part1.edsr import load_edsr
 from part1.fid import InceptionPool
-from part1.io import read_sequence, write_video
+from part1.io import read_sequence, write_sequence, write_video
 from part1.perceptual import AlexLPIPS
 from part1.restore import restore_part1
 from part1.score import score_vimeo
@@ -45,6 +45,7 @@ def main() -> None:
         name = key.replace("/", "_")
         clip_scores = {}
         for method, frames in restored.items():
+            write_sequence(output_root / "frames" / name / method, frames)
             write_video(output_root / name / f"{method}.mp4", frames)
             if high_dir is not None:
                 if scorer is None or inception is None:
@@ -57,9 +58,9 @@ def main() -> None:
         print(key, "videos written", flush=True)
     output_root.mkdir(parents=True, exist_ok=True)
     (output_root / "metrics.json").write_text(json.dumps(summary, indent=2) + "\n")
-    from vimeo_means import main as write_means
+    from pool_vimeo_fid import main as pool_fid
 
-    write_means()
+    pool_fid()
 
 
 if __name__ == "__main__":

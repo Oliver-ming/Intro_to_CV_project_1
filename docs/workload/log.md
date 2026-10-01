@@ -445,3 +445,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Added the Vimeo subset score table and the Part 1 runner that fills it from Y-channel scores. The cells stay blank while the official archive is missing.
 - Why: the 30-clip results have to land in the report without overwriting the REDS4 rows.
 - Files: `scripts/run_part1_vimeo.py`, `scripts/vimeo_means.py`, `scripts/run_edvr_vimeo.py`, `paper/main.tex`, `paper/main.pdf`, `tests/test_part1.py`, `README.md`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- Vimeo FID is one distance on all restored frames of the 30 clips. Part 1 now saves those frames, and a missing clip leaves that FID cell blank.
+- Why: averaging seven-frame distances would not match the pooled FID used for REDS4.
+- Files: `scripts/pool_vimeo_fid.py`, `scripts/run_part1_vimeo.py`, `scripts/run_edvr_vimeo.py`, `docs/workload/log.md`.
