@@ -469,3 +469,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - The Vimeo zip extractor also recognizes clip paths that use backslashes.
 - Why: a zip that stores `00071\\0454\\im1.png` would otherwise look empty and the 30 clips would not be extracted.
 - Files: `scripts/fetch_vimeo_sr_test.py`, `tests/test_part1.py`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- The Vimeo fetch now also takes the official clean test archive when the super-resolution zip has no ground-truth tree. Extraction is finished only when every subset clip has both trees.
+- Why: Y-channel scores need the official high-resolution frames as well as the low-resolution ones.
+- Files: `scripts/fetch_vimeo_sr_test.py`, `tests/test_part1.py`, `docs/workload/log.md`.

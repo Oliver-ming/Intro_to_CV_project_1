@@ -323,6 +323,29 @@ def test_vimeo_archive_member_matches_only_a_subset_clip():
     assert not module.subset_member("low_resolution/00071/0454/readme.txt", keys)
 
 
+def test_vimeo_clips_need_both_low_and_high_trees():
+    import importlib.util
+    import tempfile
+
+    spec = importlib.util.spec_from_file_location(
+        "fetch_vimeo_sr_test_ready",
+        Path(__file__).resolve().parents[1] / "scripts" / "fetch_vimeo_sr_test.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    keys = {"00071/0454"}
+    with tempfile.TemporaryDirectory() as temporary:
+        root = Path(temporary)
+        low = root / "low_resolution" / "00071" / "0454"
+        low.mkdir(parents=True)
+        (low / "im1.png").write_bytes(b"x")
+        assert module.clips_ready(root, keys) is False
+        high = root / "target" / "00071" / "0454"
+        high.mkdir(parents=True)
+        (high / "im1.png").write_bytes(b"x")
+        assert module.clips_ready(root, keys) is True
+
+
 def test_vimeo_pair_finds_low_and_high_trees():
     import tempfile
     from part1.vimeo import pair_clip

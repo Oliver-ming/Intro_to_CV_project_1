@@ -12,10 +12,20 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-URL = "http://data.csail.mit.edu/tofu/testset/vimeo_super_resolution_test.zip"
-ZIP = ROOT / "data" / "zips" / "vimeo_super_resolution_test.zip"
+URLS = (
+    (
+        "http://data.csail.mit.edu/tofu/testset/vimeo_super_resolution_test.zip",
+        ROOT / "data" / "zips" / "vimeo_super_resolution_test.zip",
+    ),
+    (
+        "http://data.csail.mit.edu/tofu/testset/vimeo_test_clean.zip",
+        ROOT / "data" / "zips" / "vimeo_test_clean.zip",
+    ),
+)
 SUBSET = ROOT / "docs" / "manifests" / "vimeo-subset.txt"
 DESTINATION = ROOT / "data" / "vimeo"
+_LOW = {"low_resolution", "low", "lr", "bicubic"}
+_HIGH = {"high_resolution", "target", "gt", "sharp"}
 
 
 def subset_member(name: str, keys: set[str]) -> bool:
@@ -47,17 +57,55 @@ def archive_ready(path: Path) -> bool:
         return False
 
 
+def clips_ready(root: Path, keys: set[str]) -> bool:
+    """True when every key has one low-resolution folder and one ground-truth folder."""
+
+    if not root.is_dir():
+        return False
+    for key in keys:
+        roles = []
+        for path in root.glob(f"**/{key}"):
+            if not path.is_dir() or not any(path.glob("*.png")):
+                continue
+            parts = {part.lower() for part in path.parts}
+            if parts & _LOW:
+                roles.append("low")
+            elif parts & _HIGH:
+                roles.append("high")
+        if roles.count("low") != 1 or roles.count("high") != 1:
+            return False
+    return True
+
+
 def main() -> None:
     keys = {line.strip() for line in SUBSET.read_text().splitlines() if line.strip()}
     if len(keys) != 30:
         raise SystemExit(f"expected 30 Vimeo keys, found {len(keys)}")
-    if _extracted(keys):
+    if clips_ready(DESTINATION, keys):
+        (ROOT / "data" / "logs" / "vimeo_sr_test.done").touch()
         print("already extracted", flush=True)
         return
-    status = http_status(URL)
-    if status != 200:
-        raise SystemExit(f"official Vimeo archive returned HTTP {status}")
-    ZIP.parent.mkdir(parents=True, exist_ok=True)
+    statuses = []
+    for url, path in URLS:
+        if clips_ready(DESTINATION, keys):
+            break
+        status = http_status(url)
+        statuses.append(status)
+        if status != 200:
+            print(f"{path.name} HTTP {status}", flush=True)
+            continue
+        _download(url, path)
+        if not archive_ready(path):
+            raise SystemExit(f"{path.name} is not a complete zip")
+        _extract(path, keys)
+    if not clips_ready(DESTINATION, keys):
+        raise SystemExit(f"official Vimeo frames are incomplete: {statuses}")
+    (ROOT / "data" / "logs" / "vimeo_sr_test.done").touch()
+    print("done", flush=True)
+
+
+def _download(url: str, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     subprocess.check_call(
         [
             "aria2c",
@@ -72,28 +120,21 @@ def main() -> None:
             "--timeout=60",
             "--max-tries=5",
             "-d",
-            str(ZIP.parent),
+            str(path.parent),
             "-o",
-            ZIP.name,
-            URL,
+            path.name,
+            url,
         ]
     )
-    if not archive_ready(ZIP):
-        raise SystemExit("downloaded Vimeo archive is not a complete zip")
-    with zipfile.ZipFile(ZIP) as archive:
+
+
+def _extract(path: Path, keys: set[str]) -> None:
+    with zipfile.ZipFile(path) as archive:
         names = [name for name in archive.namelist() if subset_member(name, keys)]
-        print(f"members {len(names)}", flush=True)
+        print(f"{path.name} members {len(names)}", flush=True)
         if not names:
-            raise SystemExit("archive contains none of the frozen subset clips")
+            return
         archive.extractall(DESTINATION, members=names)
-    (ROOT / "data" / "logs" / "vimeo_sr_test.done").touch()
-    print("done", flush=True)
-
-
-def _extracted(keys: set[str]) -> bool:
-    if not DESTINATION.is_dir():
-        return False
-    return all(any(DESTINATION.glob(f"**/{key}/*.png")) for key in keys)
 
 
 if __name__ == "__main__":
