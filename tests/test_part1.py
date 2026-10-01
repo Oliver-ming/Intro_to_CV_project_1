@@ -317,6 +317,7 @@ def test_vimeo_archive_member_matches_only_a_subset_clip():
     spec.loader.exec_module(module)
     keys = {"00071/0454"}
     assert module.subset_member("vimeo_super_resolution_test/low_resolution/00071/0454/im1.png", keys)
+    assert module.subset_member("low_resolution\\00071\\0454\\im1.png", keys)
     assert module.subset_member("target/00071/0454/im4.png", keys)
     assert not module.subset_member("low_resolution/00071/0455/im1.png", keys)
     assert not module.subset_member("low_resolution/00071/0454/readme.txt", keys)

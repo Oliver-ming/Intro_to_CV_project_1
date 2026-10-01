@@ -21,7 +21,7 @@ DESTINATION = ROOT / "data" / "vimeo"
 def subset_member(name: str, keys: set[str]) -> bool:
     if not name.lower().endswith(".png"):
         return False
-    parts = name.split("/")
+    parts = name.replace("\\", "/").split("/")
     return any(f"{parts[index]}/{parts[index + 1]}" in keys for index in range(len(parts) - 1))
 
 

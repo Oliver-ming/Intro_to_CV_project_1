@@ -463,3 +463,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - The report now says the Vimeo table is already labeled as the 30-clip, 210-frame subset, and names the Part 1 and fetch scripts.
 - Why: the table exists with blank cells, so the text should not say it will be created later.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-01
+
+- The Vimeo zip extractor also recognizes clip paths that use backslashes.
+- Why: a zip that stores `00071\\0454\\im1.png` would otherwise look empty and the 30 clips would not be extracted.
+- Files: `scripts/fetch_vimeo_sr_test.py`, `tests/test_part1.py`, `docs/workload/log.md`.
