@@ -9,9 +9,17 @@ sample, not an official video super-resolution interface.
 
 from __future__ import annotations
 
+import importlib.machinery
 import json
 import sys
+import types
 from pathlib import Path
+
+if "IPython" not in sys.modules:
+    _ipython = types.ModuleType("IPython")
+    _ipython.embed = lambda *args, **kwargs: None
+    _ipython.__spec__ = importlib.machinery.ModuleSpec("IPython", None)
+    sys.modules["IPython"] = _ipython
 
 import numpy as np
 import torch
