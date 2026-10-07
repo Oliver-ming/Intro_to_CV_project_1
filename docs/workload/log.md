@@ -525,3 +525,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Restored four filmed clips from `CV资料/Project1`: poster and person, shrubs, pond, and a dark classroom. They are area-resized to 1280×720, then OpenCV 4× bicubic, and are not scored. Frame 80 of the poster clip is the filmed-clip figure.
 - Why: a filmed clip has no ground truth, and official STAR does not fit the original 1920×1080 frame in 24 GB.
 - Files: `scripts/run_wild.py`, `paper/main.tex`, `paper/main.pdf`, `paper/figures/wild_face_text.png`, `docs/results/wild_sources.json`, `docs/workload/log.md`.
+
+## 2026-10-08
+
+- Named the public repository in the report and pointed the local branch at that GitHub remote. The push is left for the author.
+- Why: the abstract still said the link would be added later, and the remote now exists.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.

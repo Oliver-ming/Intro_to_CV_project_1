@@ -29,7 +29,7 @@ Part~2 runs EDVR and records the released TecoGAN checkpoint as a TensorFlow mod
 Part~3 treats Pyramid Flow as a conditioned generator only when the sampler can start from a noisy bicubic upsample, runs STAR from its released weights, and blends BasicVSR++ with STAR through a disagreement map.
 REDS4 is scored on RGB with no border crop.
 The extra benchmark is Vid4, with the official BasicSR $4\times$ bicubic frames. The MIT Vimeo test archive returns HTTP 403, so that 30-clip subset is not scored.
-The public repository link will be added here when the remote exists.
+The public repository is \url{https://github.com/Oliver-ming/Intro_to_CV_project_1}.
 \end{abstract}
 
 \section{Introduction}
@@ -354,7 +354,7 @@ A separate PyTorch generator trained on Vimeo bicubic data has now restored the 
 It is not the released TecoGAN checkpoint.
 
 \subsection{Reproducibility}
-The code and this draft live in one git repository.
+The code and this draft are in \url{https://github.com/Oliver-ming/Intro_to_CV_project_1}.
 Part~1 is \texttt{scripts/run\_part1.py}.
 EDVR-L on REDS4 is \texttt{scripts/run\_edvr.py} with the 5-frame bicubic checkpoint.
 Vid4 is \texttt{scripts/run\_vid4.py}.
