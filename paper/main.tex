@@ -166,7 +166,25 @@ FID pools the restored frames against the ground-truth frames of that set.
 The report states the frame count, so the number is not compared with a full-dataset paper FID.
 Scores use 8-bit quantized frames.
 Full-reference scores require ground truth.
-A wild video, which we do not have yet, will be judged visually.
+A filmed clip has no ground-truth video, so it is judged visually and is not entered in the score tables.
+
+\subsection{Filmed clips}
+Four clips were filmed at \(1920\times1080\): a person beside a poster (161 frames), shrubs (146), a pond (290), and a dark classroom (259).
+Official STAR does not fit a \(1920\times1080\) frame in 24\,GB, so each frame is area-resized to \(1280\times720\) and then downsampled with OpenCV's \(4\times\) bicubic kernel.
+That low-resolution input is not an official benchmark release.
+The same REDS bicubic checkpoints used on REDS4 restore these frames.
+Figure~\ref{fig:wild} is frame 80 of the poster clip.
+Bicubic upsampling leaves the glasses and the poster text soft.
+EDVR-L draws those edges closer to the filmed frame.
+In this crop, BasicVSR++ carries the vertical slats onto the face.
+That is this checkpoint on a filmed scene, not a REDS4 score.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/wild_face_text.png}
+\caption{Filmed poster clip, frame 80. Top: the \(1280\times720\) filmed frame, bicubic upsampling, EDVR-L, and BasicVSR++. Bottom: one \(180\times180\) crop on the poster text and the glasses. There is no ground truth, so this figure is not scored.}
+\label{fig:wild}
+\end{figure}
 
 \subsection{What has been run}
 Table~\ref{tab:status} records the state of each row. Every REDS4 method that ran has 100 frames in each of clips 000, 011, 015, and 020, and Table~\ref{tab:metrics} gives the 400-frame scores. Vid4 uses the same checkpoints on the official \texttt{BIx4} frames, and Table~\ref{tab:vid4} gives those scores. The 7-frame Vimeo EDVR-L checkpoint is on disk and is not loaded into the 5-frame REDS model.
@@ -388,6 +406,7 @@ On the 400 REDS4 frames, BasicVSR++ reaches 32.39\,dB and EDVR-L reaches 31.09\,
 Official STAR, run one frame at a time, reaches 19.28\,dB with tLPIPS 0.261.
 The hybrid, which keeps detector boxes from BasicVSR++ and blends the remaining pixels by disagreement, reaches 27.26\,dB.
 The MIT Vimeo package stays unscored. Vid4 is the scored substitute, and its rows use the REDS bicubic checkpoints on the official \texttt{BIx4} input.
+The four filmed clips are restored with those checkpoints and are compared visually in Figure~\ref{fig:wild}.
 
 {
 \small

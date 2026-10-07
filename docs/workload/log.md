@@ -519,3 +519,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Scored the course Pyramid Flow midpoint sample on REDS4: start index 10 of 20, PSNR 17.94, FID 165.99. The released generate() path stays a failure. Texture-hybrid FID is 31.20.
 - Why: the extra benchmark and the conditional sample both have frames now, so the report can show those numbers instead of blank cells.
 - Files: `scripts/run_vid4.py`, `scripts/score_pyramid_midpoint.py`, `scripts/reds_means.py`, `paper/main.tex`, `paper/main.pdf`, `docs/results/vid4_means.json`, `docs/results/vid4_pooled_fid.json`, `docs/results/pyramid_midpoint.json`, `docs/results/reds4_means.json`, `docs/results/reds4_pooled_fid.json`, `docs/workload/log.md`.
+
+## 2026-10-07
+
+- Restored four filmed clips from `CV资料/Project1`: poster and person, shrubs, pond, and a dark classroom. They are area-resized to 1280×720, then OpenCV 4× bicubic, and are not scored. Frame 80 of the poster clip is the filmed-clip figure.
+- Why: a filmed clip has no ground truth, and official STAR does not fit the original 1920×1080 frame in 24 GB.
+- Files: `scripts/run_wild.py`, `paper/main.tex`, `paper/main.pdf`, `paper/figures/wild_face_text.png`, `docs/results/wild_sources.json`, `docs/workload/log.md`.

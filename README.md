@@ -14,7 +14,7 @@ Use `../env_cv`. From this directory:
 
 Official REDS archives go in `data/zips/` and are not committed. See `docs/manifests/downloads.md`. After `train_sharp.zip` and `train_sharp_bicubic.zip` finish, REDS4 clips `000`, `011`, `015`, and `020` are extracted under `data/reds/`. Resume a dropped ground-truth download with `../env_cv/bin/python scripts/fetch_train_sharp.py`. It keeps using the stable Hugging Face URL.
 
-REDS4 ground truth is extracted. The extra benchmark is Vid4 under `data/vid4/Vid4`, with official `BIx4` and `GT` frames. Run it with `../env_cv/bin/python scripts/run_vid4.py`. The MIT packages `vimeo_super_resolution_test.zip` and `vimeo_test_clean.zip` still return HTTP 403, so the 30-clip subset is not scored. `scripts/fetch_vimeo_sr_test.py` extracts those clips only after both a low-resolution tree and a ground-truth tree are in the zips. Ground truth under `sequences/` counts.
+REDS4 ground truth is extracted. Four filmed clips are restored by `scripts/run_wild.py` and are not scored. The extra benchmark is Vid4 under `data/vid4/Vid4`, with official `BIx4` and `GT` frames. Run it with `../env_cv/bin/python scripts/run_vid4.py`. The MIT packages `vimeo_super_resolution_test.zip` and `vimeo_test_clean.zip` still return HTTP 403, so the 30-clip subset is not scored. `scripts/fetch_vimeo_sr_test.py` extracts those clips only after both a low-resolution tree and a ground-truth tree are in the zips. Ground truth under `sequences/` counts.
 
 ## Run Part 1
 

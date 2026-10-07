@@ -1,0 +1,74 @@
+{
+  "face_text": {
+    "source": "CV资料/Project1/人物与广告牌/人与广告牌1.MP4",
+    "frames": 161,
+    "filmed_wh": [
+      1920,
+      1080
+    ],
+    "view_wh": [
+      1280,
+      720
+    ],
+    "low_wh": [
+      320,
+      180
+    ],
+    "degradation": "area resize to 1280x720, then OpenCV INTER_CUBIC 4x",
+    "scored": false
+  },
+  "grass": {
+    "source": "CV资料/Project1/灌木/DJI_20261004135926_0022_D.MP4",
+    "frames": 146,
+    "filmed_wh": [
+      1920,
+      1080
+    ],
+    "view_wh": [
+      1280,
+      720
+    ],
+    "low_wh": [
+      320,
+      180
+    ],
+    "degradation": "area resize to 1280x720, then OpenCV INTER_CUBIC 4x",
+    "scored": false
+  },
+  "water": {
+    "source": "CV资料/Project1/水面/DJI_20261004135504_0019_D.MP4",
+    "frames": 290,
+    "filmed_wh": [
+      1920,
+      1080
+    ],
+    "view_wh": [
+      1280,
+      720
+    ],
+    "low_wh": [
+      320,
+      180
+    ],
+    "degradation": "area resize to 1280x720, then OpenCV INTER_CUBIC 4x",
+    "scored": false
+  },
+  "lowlight": {
+    "source": "CV资料/Project1/昏暗室内/DJI_20261004140823_0024_D.MP4",
+    "frames": 259,
+    "filmed_wh": [
+      1920,
+      1080
+    ],
+    "view_wh": [
+      1280,
+      720
+    ],
+    "low_wh": [
+      320,
+      180
+    ],
+    "degradation": "area resize to 1280x720, then OpenCV INTER_CUBIC 4x",
+    "scored": false
+  }
+}
