@@ -531,3 +531,9 @@ Append one entry per change. Each entry states the date, what changed, why, and 
 - Named the public repository in the report and pointed the local branch at that GitHub remote. The push is left for the author.
 - Why: the abstract still said the link would be added later, and the remote now exists.
 - Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
+
+## 2026-10-08
+
+- Added Jiayang Liu, student ID 50027216, as the second author. Yuming Zhang's ID is 50025933.
+- Why: the speaker note now names both group members.
+- Files: `paper/main.tex`, `paper/main.pdf`, `docs/workload/log.md`.
